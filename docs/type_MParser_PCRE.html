@@ -1,0 +1,51 @@
+<html><head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Index of module types" rel=Appendix href="index_module_types.html">
+<link title="MParser" rel="Chapter" href="MParser.html">
+<link title="MParser_Sig" rel="Chapter" href="MParser_Sig.html">
+<link title="MParser_Char_Stream" rel="Chapter" href="MParser_Char_Stream.html">
+<link title="MParser_PCRE" rel="Chapter" href="MParser_PCRE.html">
+<link title="MParser_RE" rel="Chapter" href="MParser_RE.html"><title>MParser_PCRE</title>
+</head>
+<body>
+<code class="code"><span class="keyword">sig</span>
+&nbsp;&nbsp;<span class="keyword">module</span>&nbsp;<span class="constructor">Regexp</span>&nbsp;:&nbsp;<span class="constructor">MParser_Sig</span>.<span class="constructor">Regexp</span>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;match_regexp&nbsp;:&nbsp;<span class="keywordsign">'</span>s&nbsp;<span class="constructor">MParser</span>.state&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Regexp</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Regexp</span>.substrings&nbsp;option
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;make_regexp&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Regexp</span>.t
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;regexp&nbsp;:&nbsp;<span class="constructor">Regexp</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;(string,&nbsp;<span class="keywordsign">'</span>s)&nbsp;<span class="constructor">MParser</span>.t
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;regexp_substrings&nbsp;:&nbsp;<span class="constructor">Regexp</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;(string&nbsp;array,&nbsp;<span class="keywordsign">'</span>s)&nbsp;<span class="constructor">MParser</span>.t
+&nbsp;&nbsp;<span class="keyword">module</span>&nbsp;<span class="constructor">Tokens</span>&nbsp;:
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">sig</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;symbol&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;(string,&nbsp;<span class="keywordsign">'</span>s)&nbsp;<span class="constructor">MParser</span>.t
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;skip_symbol&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;(unit,&nbsp;<span class="keywordsign">'</span>s)&nbsp;<span class="constructor">MParser</span>.t
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;parens&nbsp;:&nbsp;(<span class="keywordsign">'</span>a,&nbsp;<span class="keywordsign">'</span>s)&nbsp;<span class="constructor">MParser</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;(<span class="keywordsign">'</span>a,&nbsp;<span class="keywordsign">'</span>s)&nbsp;<span class="constructor">MParser</span>.t
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;braces&nbsp;:&nbsp;(<span class="keywordsign">'</span>a,&nbsp;<span class="keywordsign">'</span>s)&nbsp;<span class="constructor">MParser</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;(<span class="keywordsign">'</span>a,&nbsp;<span class="keywordsign">'</span>s)&nbsp;<span class="constructor">MParser</span>.t
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;brackets&nbsp;:&nbsp;(<span class="keywordsign">'</span>a,&nbsp;<span class="keywordsign">'</span>s)&nbsp;<span class="constructor">MParser</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;(<span class="keywordsign">'</span>a,&nbsp;<span class="keywordsign">'</span>s)&nbsp;<span class="constructor">MParser</span>.t
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;squares&nbsp;:&nbsp;(<span class="keywordsign">'</span>a,&nbsp;<span class="keywordsign">'</span>s)&nbsp;<span class="constructor">MParser</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;(<span class="keywordsign">'</span>a,&nbsp;<span class="keywordsign">'</span>s)&nbsp;<span class="constructor">MParser</span>.t
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;semi&nbsp;:&nbsp;(char,&nbsp;<span class="keywordsign">'</span>s)&nbsp;<span class="constructor">MParser</span>.t
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;comma&nbsp;:&nbsp;(char,&nbsp;<span class="keywordsign">'</span>s)&nbsp;<span class="constructor">MParser</span>.t
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;colon&nbsp;:&nbsp;(char,&nbsp;<span class="keywordsign">'</span>s)&nbsp;<span class="constructor">MParser</span>.t
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;dot&nbsp;:&nbsp;(char,&nbsp;<span class="keywordsign">'</span>s)&nbsp;<span class="constructor">MParser</span>.t
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;semi_sep&nbsp;:&nbsp;(<span class="keywordsign">'</span>a,&nbsp;<span class="keywordsign">'</span>s)&nbsp;<span class="constructor">MParser</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;(<span class="keywordsign">'</span>a&nbsp;list,&nbsp;<span class="keywordsign">'</span>s)&nbsp;<span class="constructor">MParser</span>.t
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;semi_sep1&nbsp;:&nbsp;(<span class="keywordsign">'</span>a,&nbsp;<span class="keywordsign">'</span>s)&nbsp;<span class="constructor">MParser</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;(<span class="keywordsign">'</span>a&nbsp;list,&nbsp;<span class="keywordsign">'</span>s)&nbsp;<span class="constructor">MParser</span>.t
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;semi_sep_end&nbsp;:&nbsp;(<span class="keywordsign">'</span>a,&nbsp;<span class="keywordsign">'</span>s)&nbsp;<span class="constructor">MParser</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;(<span class="keywordsign">'</span>a&nbsp;list,&nbsp;<span class="keywordsign">'</span>s)&nbsp;<span class="constructor">MParser</span>.t
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;semi_sep_end1&nbsp;:&nbsp;(<span class="keywordsign">'</span>a,&nbsp;<span class="keywordsign">'</span>s)&nbsp;<span class="constructor">MParser</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;(<span class="keywordsign">'</span>a&nbsp;list,&nbsp;<span class="keywordsign">'</span>s)&nbsp;<span class="constructor">MParser</span>.t
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;semi_end&nbsp;:&nbsp;(<span class="keywordsign">'</span>a,&nbsp;<span class="keywordsign">'</span>s)&nbsp;<span class="constructor">MParser</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;(<span class="keywordsign">'</span>a&nbsp;list,&nbsp;<span class="keywordsign">'</span>s)&nbsp;<span class="constructor">MParser</span>.t
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;semi_end1&nbsp;:&nbsp;(<span class="keywordsign">'</span>a,&nbsp;<span class="keywordsign">'</span>s)&nbsp;<span class="constructor">MParser</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;(<span class="keywordsign">'</span>a&nbsp;list,&nbsp;<span class="keywordsign">'</span>s)&nbsp;<span class="constructor">MParser</span>.t
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;comma_sep&nbsp;:&nbsp;(<span class="keywordsign">'</span>a,&nbsp;<span class="keywordsign">'</span>s)&nbsp;<span class="constructor">MParser</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;(<span class="keywordsign">'</span>a&nbsp;list,&nbsp;<span class="keywordsign">'</span>s)&nbsp;<span class="constructor">MParser</span>.t
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;comma_sep1&nbsp;:&nbsp;(<span class="keywordsign">'</span>a,&nbsp;<span class="keywordsign">'</span>s)&nbsp;<span class="constructor">MParser</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;(<span class="keywordsign">'</span>a&nbsp;list,&nbsp;<span class="keywordsign">'</span>s)&nbsp;<span class="constructor">MParser</span>.t
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;char_literal&nbsp;:&nbsp;(char,&nbsp;<span class="keywordsign">'</span>s)&nbsp;<span class="constructor">MParser</span>.t
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;string_literal&nbsp;:&nbsp;(string,&nbsp;<span class="keywordsign">'</span>s)&nbsp;<span class="constructor">MParser</span>.t
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;decimal&nbsp;:&nbsp;(int,&nbsp;<span class="keywordsign">'</span>s)&nbsp;<span class="constructor">MParser</span>.t
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;hexadecimal&nbsp;:&nbsp;(int,&nbsp;<span class="keywordsign">'</span>s)&nbsp;<span class="constructor">MParser</span>.t
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;octal&nbsp;:&nbsp;(int,&nbsp;<span class="keywordsign">'</span>s)&nbsp;<span class="constructor">MParser</span>.t
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;binary&nbsp;:&nbsp;(int,&nbsp;<span class="keywordsign">'</span>s)&nbsp;<span class="constructor">MParser</span>.t
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;integer&nbsp;:&nbsp;(int,&nbsp;<span class="keywordsign">'</span>s)&nbsp;<span class="constructor">MParser</span>.t
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;float&nbsp;:&nbsp;(float,&nbsp;<span class="keywordsign">'</span>s)&nbsp;<span class="constructor">MParser</span>.t
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span>
+<span class="keyword">end</span></code></body></html>

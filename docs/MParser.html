@@ -1,0 +1,1161 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link rel="next" href="MParser_Sig.html">
+<link rel="Up" href="index.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Index of module types" rel=Appendix href="index_module_types.html">
+<link title="MParser" rel="Chapter" href="MParser.html">
+<link title="MParser_Sig" rel="Chapter" href="MParser_Sig.html">
+<link title="MParser_Char_Stream" rel="Chapter" href="MParser_Char_Stream.html">
+<link title="MParser_PCRE" rel="Chapter" href="MParser_PCRE.html">
+<link title="MParser_RE" rel="Chapter" href="MParser_RE.html"><link title="Parser state" rel="Section" href="#2_Parserstate">
+<link title="Error handling and reporting" rel="Section" href="#2_Errorhandlingandreporting">
+<link title="The parser type" rel="Section" href="#2_Theparsertype">
+<link title="Running a parser" rel="Section" href="#2_Runningaparser">
+<link title="Parser combinators" rel="Section" href="#2_Parsercombinators">
+<link title="Parsers accessing the parser state" rel="Section" href="#2_Parsersaccessingtheparserstate">
+<link title="Parsers accessing the user state" rel="Section" href="#2_Parsersaccessingtheuserstate">
+<link title="Character-based parsers" rel="Section" href="#2_Characterbasedparsers">
+<link title="Expression parser" rel="Section" href="#2_Expressionparser">
+<link title="Regexp-related features" rel="Section" href="#2_Regexprelatedfeatures">
+<title>MParser</title>
+</head>
+<body>
+<div class="navbar">&nbsp;<a class="up" href="index.html" title="Index">Up</a>
+&nbsp;<a class="post" href="MParser_Sig.html" title="MParser_Sig">Next</a>
+</div>
+<h1>Module <a href="type_MParser.html">MParser</a></h1>
+
+<pre><span class="keyword">module</span> MParser: <code class="code"><span class="keyword">sig</span></code> <a href="MParser.html">..</a> <code class="code"><span class="keyword">end</span></code></pre><div class="info module top">
+A monadic parser combinator library.<br>
+</div>
+<hr width="100%">
+<br>
+The parser combinators provided by this module can be used to build parsers
+    for context-sensitive, infinite look-ahead grammars that are reasonably
+    efficient and produce good error messages due to a controlled use of
+    backtracking. The performance of the resulting parsers should be
+    sufficient for most applications. The parsers get their input from
+    character streams provided by the <a href="MParser_Char_Stream.html"><code class="code"><span class="constructor">MParser_Char_Stream</span></code></a> module, which means
+    that it is possible to parse files up to a size of at least 1GB.
+<p>
+
+    The <code class="code"><span class="constructor">MParser</span></code> module is an OCaml version of the
+    <a href="http://www.quanttec.com/fparsec">FParsec</a> library for F# by Stephan
+    Tolksdorf and the
+    <a href="http://research.microsoft.com/users/daan/parsec.html">Parsec</a> library
+    for Haskell by Daan Leijen. The interface of the <code class="code"><span class="constructor">MParser</span></code> module is very
+    similar to the interfaces of Parsec and FParsec. For this reason, we keep
+    the documentation here rather terse. See the excellent documentation of
+    Parsec and FParsec for more information. Parsers should be easily
+    portable from these two libraries to <code class="code"><span class="constructor">MParser</span></code> (although some functions
+    might behave subtly different). Where the behavior of Parsec and FParsec
+    differs, <code class="code"><span class="constructor">MParser</span></code> generally behaves like FParsec (but there might be
+    exceptions).
+<p>
+
+    A significant drawback of the implementation is that it relies on the
+    standard OCaml types <code class="code">char</code> and <code class="code">string</code> and therefore there is
+    <em>currently no support for Unicode</em>.<br>
+<br>
+<h2 id="2_Parserstate">Parser state</h2>
+<p>
+
+    The state of a parser consists of the input to be parsed, the current
+    position in the input, the number of the current line, the position of the
+    first char of the current line in the input, and an optional user state.
+    A position <code class="code">p</code> is valid if it satisfies <code class="code">0 &lt;= p <span class="keywordsign">&amp;&amp;</span> p &lt; l</code>, where <code class="code">l</code> is
+    the length of the input; all other positions are invalid. Characters can
+    only be read from valid positions.
+<p>
+
+    The following functions that directly access or change the parser state
+    should only be used to write very low-level parsers. All other parsers
+    should be composed from parser combinators (see below).<br>
+
+<pre><span id="TYPEstate"><span class="keyword">type</span> <code class="type">'s</code> state</span> </pre>
+<div class="info ">
+The type of parser states.<br>
+</div>
+
+
+<pre><span id="VALinit"><span class="keyword">val</span> init</span> : <code class="type"><a href="MParser_Char_Stream.html#TYPEt">MParser_Char_Stream.t</a> -> 's -> 's <a href="MParser.html#TYPEstate">state</a></code></pre><div class="info ">
+<code class="code">init input user</code> returns an initial parser state using the input string
+    <code class="code">input</code> and the initial user state <code class="code">user</code>.<br>
+</div>
+
+<pre><span id="VALis_eof"><span class="keyword">val</span> is_eof</span> : <code class="type">'s <a href="MParser.html#TYPEstate">state</a> -> bool</code></pre><div class="info ">
+<code class="code">is_eof s</code> returns <code class="code"><span class="keyword">true</span></code> if the current position of <code class="code">s</code> is not a valid
+    position, and <code class="code"><span class="keyword">false</span></code> otherwise. If <code class="code">is_eof</code> returns <code class="code"><span class="keyword">false</span></code>, a character
+    can be read from the current position.<br>
+</div>
+
+<pre><span id="VALnext_state"><span class="keyword">val</span> next_state</span> : <code class="type">'s <a href="MParser.html#TYPEstate">state</a> -> 's <a href="MParser.html#TYPEstate">state</a></code></pre><div class="info ">
+<code class="code">advance s</code> returns the state <code class="code">s</code> with the position advanced by one
+    character if the current position of <code class="code">s</code> is a valid position. Otherwise,
+    the same state is returned. This function does not register newlines. If
+    the current character is a newline, <code class="code">advance_state_nl</code> should be used
+    instead.<br>
+</div>
+
+<pre><span id="VALadvance_state"><span class="keyword">val</span> advance_state</span> : <code class="type">'s <a href="MParser.html#TYPEstate">state</a> -> int -> 's <a href="MParser.html#TYPEstate">state</a></code></pre><div class="info ">
+<code class="code">advance_state s n</code> returns the state <code class="code">s</code> with the position advanced by
+    <code class="code">n</code> characters if the current position of <code class="code">s</code> is a valid position.
+    Otherwise, the same state is returned. This function does not register
+    newlines. If the current character is a newline, <code class="code">advance_state_nl</code>
+    should be used instead.<br>
+</div>
+
+<pre><span id="VALadvance_state_nl"><span class="keyword">val</span> advance_state_nl</span> : <code class="type">'s <a href="MParser.html#TYPEstate">state</a> -> int -> 's <a href="MParser.html#TYPEstate">state</a></code></pre><div class="info ">
+<code class="code">advance_state_nl s n</code> returns the state <code class="code">s</code> with the position advanced by
+    <code class="code">n</code> characters and the line counter increased by one if the current
+    position of <code class="code">s</code> is a valid position. Otherwise, the same state is
+    returned.<br>
+</div>
+
+<pre><span id="VALread_char"><span class="keyword">val</span> read_char</span> : <code class="type">'s <a href="MParser.html#TYPEstate">state</a> -> char option</code></pre><div class="info ">
+<code class="code">read_char s</code> returns <code class="code"><span class="constructor">Some</span> c</code> where <code class="code">c</code> is the character at the current
+    position, or <code class="code"><span class="constructor">None</span></code> if this position is not a valid position.<br>
+</div>
+
+<pre><span id="VALread_index"><span class="keyword">val</span> read_index</span> : <code class="type">'s <a href="MParser.html#TYPEstate">state</a> -> int -> char option</code></pre><div class="info ">
+<code class="code">read_index s pos</code> returns <code class="code"><span class="constructor">Some</span> c</code> where <code class="code">c</code> is the character at the
+    position <code class="code">pos</code>, or <code class="code"><span class="constructor">None</span></code> if this position is not a valid position.<br>
+</div>
+
+<pre><span id="VALnext_char"><span class="keyword">val</span> next_char</span> : <code class="type">'s <a href="MParser.html#TYPEstate">state</a> -> char option</code></pre><div class="info ">
+<code class="code">next_char s</code> returns <code class="code"><span class="constructor">Some</span> c</code> where <code class="code">c</code> is the character after the
+    current position, or <code class="code"><span class="constructor">None</span></code> if this position is not a valid position.<br>
+</div>
+
+<pre><span id="VALprev_char"><span class="keyword">val</span> prev_char</span> : <code class="type">'s <a href="MParser.html#TYPEstate">state</a> -> char option</code></pre><div class="info ">
+<code class="code">prev_char s</code> returns <code class="code"><span class="constructor">Some</span> c</code> where <code class="code">c</code> is the character before the
+    current position, or <code class="code"><span class="constructor">None</span></code> if this position is not a valid position.<br>
+</div>
+
+<pre><span id="VALread_string"><span class="keyword">val</span> read_string</span> : <code class="type">'s <a href="MParser.html#TYPEstate">state</a> -> int -> string</code></pre><div class="info ">
+<code class="code">read_string s maxlen</code> returns a string containing the next <code class="code">n</code>
+    characters, where <code class="code">n</code> is the minimum of <code class="code">maxlen</code> and the number of
+    characters remaining from the current position. If the current position
+    is not a valid position, the empty string is returned.<br>
+</div>
+
+<pre><span id="VALmatch_char"><span class="keyword">val</span> match_char</span> : <code class="type">'s <a href="MParser.html#TYPEstate">state</a> -> char -> bool</code></pre><div class="info ">
+<code class="code">match_char s c</code> returns <code class="code"><span class="keyword">true</span></code> if <code class="code">c</code> ist the char at the current
+    position, and <code class="code"><span class="keyword">false</span></code> otherwise.<br>
+</div>
+
+<pre><span id="VALmatch_string"><span class="keyword">val</span> match_string</span> : <code class="type">'s <a href="MParser.html#TYPEstate">state</a> -> string -> bool</code></pre><div class="info ">
+<code class="code">match_string s str</code> returns <code class="code"><span class="keyword">true</span></code> if the input starting at the current
+    position matches the string <code class="code">str</code>, and <code class="code"><span class="keyword">false</span></code> otherwise.<br>
+</div>
+<br>
+<h2 id="2_Errorhandlingandreporting">Error handling and reporting</h2>
+<p>
+
+    When building parsers from the parser combinators and running them using
+    the <code class="code">parse</code> functions (see below), error handling and reporting is nearly
+    automatic. If a parser run fails, the <code class="code">parse</code> functions return a
+    human-readable (plain English) error message that is generated from the
+    labels attached to the parsers using the labelling operators <code class="code">&lt;?&gt;</code> and
+    <code class="code">&lt;??&gt;</code>.
+<p>
+
+    The following types and functions can be used for explicit creation of
+    errors in parsers and for customizing the handling of errors returned by
+    parser runs. For this purpose the <code class="code">parse</code> functions also return the
+    actual <code class="code">error</code> value in the case of a failed parser run. Typical
+    applications for a customized of error handling are the
+    internationalization of error messages and the automatic processing of
+    parse errors.<br>
+
+<pre><span id="TYPEpos"><span class="keyword">type</span> <code class="type"></code>pos</span> = <code class="type">int * int * int</code> </pre>
+<div class="info ">
+An input position, consisting of an index into the input, a line number,
+    and a column number.<br>
+</div>
+
+
+<pre><code><span id="TYPEerror_message"><span class="keyword">type</span> <code class="type"></code>error_message</span> = </code></pre><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTerror_message.Unexpected_error"><span class="constructor">Unexpected_error</span></span> <span class="keyword">of</span> <code class="type">string</code></code></td>
+<td class="typefieldcomment" align="left" valign="top" ><code>(*</code></td><td class="typefieldcomment" align="left" valign="top" ><div class="info ">
+An unexpected symbol occurred in the input.<br>
+</div>
+</td><td class="typefieldcomment" align="left" valign="bottom" ><code>*)</code></td>
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTerror_message.Expected_error"><span class="constructor">Expected_error</span></span> <span class="keyword">of</span> <code class="type">string</code></code></td>
+<td class="typefieldcomment" align="left" valign="top" ><code>(*</code></td><td class="typefieldcomment" align="left" valign="top" ><div class="info ">
+A symbol that was expected in the input could not be parsed.<br>
+</div>
+</td><td class="typefieldcomment" align="left" valign="bottom" ><code>*)</code></td>
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTerror_message.Message_error"><span class="constructor">Message_error</span></span> <span class="keyword">of</span> <code class="type">string</code></code></td>
+<td class="typefieldcomment" align="left" valign="top" ><code>(*</code></td><td class="typefieldcomment" align="left" valign="top" ><div class="info ">
+An error occurred that does not fit into one of the other
+        categories.<br>
+</div>
+</td><td class="typefieldcomment" align="left" valign="bottom" ><code>*)</code></td>
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTerror_message.Compound_error"><span class="constructor">Compound_error</span></span> <span class="keyword">of</span> <code class="type">string * <a href="MParser.html#TYPEerror">error</a></code></code></td>
+<td class="typefieldcomment" align="left" valign="top" ><code>(*</code></td><td class="typefieldcomment" align="left" valign="top" ><div class="info ">
+An error occurred while parsing a part of a compound.<br>
+</div>
+</td><td class="typefieldcomment" align="left" valign="bottom" ><code>*)</code></td>
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTerror_message.Backtrack_error"><span class="constructor">Backtrack_error</span></span> <span class="keyword">of</span> <code class="type"><a href="MParser.html#TYPEerror">error</a></code></code></td>
+<td class="typefieldcomment" align="left" valign="top" ><code>(*</code></td><td class="typefieldcomment" align="left" valign="top" ><div class="info ">
+The parser backtracked after an error occurred.<br>
+</div>
+</td><td class="typefieldcomment" align="left" valign="bottom" ><code>*)</code></td>
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTerror_message.Unknown_error"><span class="constructor">Unknown_error</span></span></code></td>
+<td class="typefieldcomment" align="left" valign="top" ><code>(*</code></td><td class="typefieldcomment" align="left" valign="top" ><div class="info ">
+An unknown error occurred.<br>
+</div>
+</td><td class="typefieldcomment" align="left" valign="bottom" ><code>*)</code></td>
+</tr></table>
+
+<div class="info ">
+The type of error messages returned by parsers.<br>
+</div>
+
+
+<pre><code><span id="TYPEerror"><span class="keyword">type</span> <code class="type"></code>error</span> = </code></pre><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTerror.Parse_error"><span class="constructor">Parse_error</span></span> <span class="keyword">of</span> <code class="type"><a href="MParser.html#TYPEpos">pos</a> * <a href="MParser.html#TYPEerror_message">error_message</a> list</code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTerror.No_error"><span class="constructor">No_error</span></span></code></td>
+
+</tr></table>
+
+<div class="info ">
+The type of errors returned by parsers.<br>
+</div>
+
+
+<pre><span id="VALunexpected_error"><span class="keyword">val</span> unexpected_error</span> : <code class="type">'s <a href="MParser.html#TYPEstate">state</a> -> string -> <a href="MParser.html#TYPEerror">error</a></code></pre><div class="info ">
+Creates an <code class="code"><span class="constructor">Unexpected_error</span></code>. The argument should describe the
+    unexpected symbol that occurred in the input.<br>
+</div>
+
+<pre><span id="VALexpected_error"><span class="keyword">val</span> expected_error</span> : <code class="type">'s <a href="MParser.html#TYPEstate">state</a> -> string -> <a href="MParser.html#TYPEerror">error</a></code></pre><div class="info ">
+Creates an <code class="code"><span class="constructor">Expected_error</span></code>. The argument should describe the symbol that
+    was expected but could not be parsed.<br>
+</div>
+
+<pre><span id="VALmessage_error"><span class="keyword">val</span> message_error</span> : <code class="type">'s <a href="MParser.html#TYPEstate">state</a> -> string -> <a href="MParser.html#TYPEerror">error</a></code></pre><div class="info ">
+Creates a <code class="code"><span class="constructor">Message_error</span></code>. The argument should contain the complete error
+    message.<br>
+</div>
+
+<pre><span id="VALcompound_error"><span class="keyword">val</span> compound_error</span> : <code class="type">'s <a href="MParser.html#TYPEstate">state</a> -> string -> <a href="MParser.html#TYPEerror">error</a> -> <a href="MParser.html#TYPEerror">error</a></code></pre><div class="info ">
+Creates a <code class="code"><span class="constructor">Compound_error</span></code>. The string argument should describe the
+    compound that could not be parsed; the error argument should be the
+    error that caused to compound parser to fail.<br>
+</div>
+
+<pre><span id="VALbacktrack_error"><span class="keyword">val</span> backtrack_error</span> : <code class="type">'s <a href="MParser.html#TYPEstate">state</a> -> <a href="MParser.html#TYPEerror">error</a> -> <a href="MParser.html#TYPEerror">error</a></code></pre><div class="info ">
+Creates a <code class="code"><span class="constructor">Backtrack_error</span></code>. The argument should be the error that caused
+    the parser to backtrack.<br>
+</div>
+
+<pre><span id="VALunknown_error"><span class="keyword">val</span> unknown_error</span> : <code class="type">'s <a href="MParser.html#TYPEstate">state</a> -> <a href="MParser.html#TYPEerror">error</a></code></pre><div class="info ">
+Creates an <code class="code"><span class="constructor">Unknown_error</span></code>.<br>
+</div>
+
+<pre><span id="VALmerge_errors"><span class="keyword">val</span> merge_errors</span> : <code class="type"><a href="MParser.html#TYPEerror">error</a> -> <a href="MParser.html#TYPEerror">error</a> -> <a href="MParser.html#TYPEerror">error</a></code></pre><div class="info ">
+Merges two errors. The behavior of the error reporting is undefined if
+    <code class="code"><span class="constructor">Parse_error</span></code> values from different positions are merged.<br>
+</div>
+<br>
+<h2 id="2_Theparsertype">The parser type</h2>
+<p>
+
+    To make handling of parse errors possible, the reply of a parser must not
+    only indicate whether the parser has failed or succeeded, but also whether
+    the parser has consumed input. When a parser is run, the general rule is
+    that when it fails, alternative parsers created using the <code class="code">&lt;|&gt;</code> and
+    <code class="code">choice</code> combinators are only tried if the first parser did not consume
+    input. Thus by default the resulting parsers are predictive
+    (non-backtracking). This behavior can be changed by using combinators
+    like <code class="code">attempt</code> and <code class="code">look_ahead</code>. By this means the <code class="code"><span class="constructor">MParser</span></code> module can
+    be used to build efficient parsers for a very large class of languages
+    that provide nearly automatic handling of errors, which is virtually
+    impossible with full-backtracking parsers (because the position causing
+    the failure cannot be determined).
+<p>
+
+    This approach to combinator parsing has been pioneered by Daan Leijen's
+    <a href="http://research.microsoft.com/users/daan/parsec.html">Parsec</a> library.
+    A more detailed presentation of it can be found in the following paper:
+    Daan Leijen and Erik Meijer, <em>Parsec: Direct-Style Monadic Parser
+    Combinators For The Real World</em>, Technical Report UU-CS-2001-35,
+    Departement of Computer Science, Universiteit Utrecht, 2001.<br>
+
+<pre><code><span id="TYPEreply"><span class="keyword">type</span> <code class="type">('a, 's)</code> reply</span> = </code></pre><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTreply.Empty_failed"><span class="constructor">Empty_failed</span></span> <span class="keyword">of</span> <code class="type"><a href="MParser.html#TYPEerror">error</a></code></code></td>
+<td class="typefieldcomment" align="left" valign="top" ><code>(*</code></td><td class="typefieldcomment" align="left" valign="top" ><div class="info ">
+The parser failed without consuming input.<br>
+</div>
+</td><td class="typefieldcomment" align="left" valign="bottom" ><code>*)</code></td>
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTreply.Empty_ok"><span class="constructor">Empty_ok</span></span> <span class="keyword">of</span> <code class="type">'a * 's <a href="MParser.html#TYPEstate">state</a> * <a href="MParser.html#TYPEerror">error</a></code></code></td>
+<td class="typefieldcomment" align="left" valign="top" ><code>(*</code></td><td class="typefieldcomment" align="left" valign="top" ><div class="info ">
+The parser succeeded without consuming input.<br>
+</div>
+</td><td class="typefieldcomment" align="left" valign="bottom" ><code>*)</code></td>
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTreply.Consumed_failed"><span class="constructor">Consumed_failed</span></span> <span class="keyword">of</span> <code class="type"><a href="MParser.html#TYPEerror">error</a></code></code></td>
+<td class="typefieldcomment" align="left" valign="top" ><code>(*</code></td><td class="typefieldcomment" align="left" valign="top" ><div class="info ">
+The parser failed after consuming input.<br>
+</div>
+</td><td class="typefieldcomment" align="left" valign="bottom" ><code>*)</code></td>
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTreply.Consumed_ok"><span class="constructor">Consumed_ok</span></span> <span class="keyword">of</span> <code class="type">'a * 's <a href="MParser.html#TYPEstate">state</a> * <a href="MParser.html#TYPEerror">error</a></code></code></td>
+<td class="typefieldcomment" align="left" valign="top" ><code>(*</code></td><td class="typefieldcomment" align="left" valign="top" ><div class="info ">
+The parser succeeded after consuming input.<br>
+</div>
+</td><td class="typefieldcomment" align="left" valign="bottom" ><code>*)</code></td>
+</tr></table>
+
+<div class="info ">
+The type of replies returned by parsers.<br>
+</div>
+
+
+<pre><span id="TYPEt"><span class="keyword">type</span> <code class="type">('a, 's)</code> t</span> = <code class="type">'s <a href="MParser.html#TYPEstate">state</a> -> ('a, 's) <a href="MParser.html#TYPEreply">reply</a></code> </pre>
+
+
+<pre><span id="TYPEparser"><span class="keyword">type</span> <code class="type">('a, 's)</code> parser</span> = <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a></code> </pre>
+<div class="info ">
+The type of parsers with result type <code class="code"><span class="keywordsign">'</span>a</code> and user state type <code class="code"><span class="keywordsign">'</span>s</code>.<br>
+</div>
+
+
+<pre><span id="VALmake_ok"><span class="keyword">val</span> make_ok</span> : <code class="type">bool -> 'a -> 's <a href="MParser.html#TYPEstate">state</a> -> <a href="MParser.html#TYPEerror">error</a> -> ('a, 's) <a href="MParser.html#TYPEreply">reply</a></code></pre><div class="info ">
+<code class="code">make_ok consumed result state error</code> returns <code class="code"><span class="constructor">Empty_ok</span> (result, state,
+    error)</code> if <code class="code">consumed = <span class="keyword">false</span></code>, and <code class="code"><span class="constructor">Consumed_ok</span> (result, state, error)</code>
+    if <code class="code">consumed = <span class="keyword">true</span></code>.<br>
+</div>
+
+<pre><span id="VALmake_failed"><span class="keyword">val</span> make_failed</span> : <code class="type">bool -> <a href="MParser.html#TYPEerror">error</a> -> ('a, 's) <a href="MParser.html#TYPEreply">reply</a></code></pre><div class="info ">
+<code class="code">make_failed consumed error</code> returns <code class="code"><span class="constructor">Empty_failed</span> error</code> if <code class="code">consumed =
+    <span class="keyword">false</span></code>, and <code class="code"><span class="constructor">Consumed_failed</span> error</code> of <code class="code">consumed = <span class="keyword">true</span></code>.<br>
+</div>
+
+<pre><span id="VALis_consumed"><span class="keyword">val</span> is_consumed</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEreply">reply</a> -> bool</code></pre><div class="info ">
+<code class="code">is_consumed reply</code> returns <code class="code"><span class="keyword">true</span></code> if <code class="code">reply</code> is <code class="code"><span class="constructor">Consumed_failed</span></code> or
+    <code class="code"><span class="constructor">Consumed_ok</span></code>, and <code class="code"><span class="keyword">false</span></code> otherwise.<br>
+</div>
+
+<pre><span id="VALis_empty"><span class="keyword">val</span> is_empty</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEreply">reply</a> -> bool</code></pre><div class="info ">
+<code class="code">is_consumed reply</code> returns <code class="code"><span class="keyword">true</span></code> if <code class="code">reply</code> is <code class="code"><span class="constructor">Empty_failed</span></code> or
+    <code class="code"><span class="constructor">Empty_ok</span></code>, and <code class="code"><span class="keyword">false</span></code> otherwise.<br>
+</div>
+
+<pre><span id="VALis_error"><span class="keyword">val</span> is_error</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEreply">reply</a> -> bool</code></pre><div class="info ">
+<code class="code">is_error reply</code> returns <code class="code"><span class="keyword">true</span></code> if <code class="code">reply</code> is <code class="code"><span class="constructor">Empty_failed</span></code> or
+    <code class="code"><span class="constructor">Consumed_failed</span></code>, and <code class="code"><span class="keyword">false</span></code> otherwise.<br>
+</div>
+
+<pre><span id="VALis_ok"><span class="keyword">val</span> is_ok</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEreply">reply</a> -> bool</code></pre><div class="info ">
+<code class="code">is_error reply</code> returns <code class="code"><span class="keyword">true</span></code> if <code class="code">reply</code> is <code class="code"><span class="constructor">Empty_ok</span></code> or <code class="code"><span class="constructor">Consumed_ok</span></code>,
+    and <code class="code"><span class="keyword">false</span></code> otherwise.<br>
+</div>
+
+<pre><span id="VALset_error"><span class="keyword">val</span> set_error</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEreply">reply</a> -> <a href="MParser.html#TYPEerror">error</a> -> ('a, 's) <a href="MParser.html#TYPEreply">reply</a></code></pre><div class="info ">
+<code class="code">set_error reply error</code> returns <code class="code">reply</code> with the error message replaced by
+    <code class="code">error</code>.<br>
+</div>
+<br>
+<h2 id="2_Runningaparser">Running a parser</h2><br>
+
+<pre><code><span id="TYPEresult"><span class="keyword">type</span> <code class="type">'a</code> result</span> = </code></pre><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTresult.Success"><span class="constructor">Success</span></span> <span class="keyword">of</span> <code class="type">'a</code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTresult.Failed"><span class="constructor">Failed</span></span> <span class="keyword">of</span> <code class="type">string * <a href="MParser.html#TYPEerror">error</a></code></code></td>
+
+</tr></table>
+
+<div class="info ">
+The result of a parser run. In the case of <code class="code"><span class="constructor">Failed</span></code>, it contains a
+    human-readable error message.<br>
+</div>
+
+
+<pre><span id="VALparse"><span class="keyword">val</span> parse</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -> <a href="MParser_Char_Stream.html#TYPEt">MParser_Char_Stream.t</a> -> 's -> 'a <a href="MParser.html#TYPEresult">result</a></code></pre><div class="info ">
+<code class="code">parse p input user</code> runs the parser <code class="code">p</code> on the input <code class="code">input</code> using the
+    initial user state <code class="code">user</code>.<br>
+</div>
+
+<pre><span id="VALparse_string"><span class="keyword">val</span> parse_string</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -> string -> 's -> 'a <a href="MParser.html#TYPEresult">result</a></code></pre><div class="info ">
+<code class="code">parse_string p str user</code> runs the parser <code class="code">p</code> on the string <code class="code">str</code> using
+    the initial user state <code class="code">user</code>.<br>
+</div>
+
+<pre><span id="VALparse_channel"><span class="keyword">val</span> parse_channel</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -> Pervasives.in_channel -> 's -> 'a <a href="MParser.html#TYPEresult">result</a></code></pre><div class="info ">
+<code class="code">parse_string p chn user</code> runs the parser <code class="code">p</code> on the input channel <code class="code">chn</code>
+    using the initial user state <code class="code">user</code>.<br>
+</div>
+<br>
+<h2 id="2_Parsercombinators">Parser combinators</h2>
+<p>
+
+    <em>Note:</em> A statement of the form "parser <code class="code">p</code> is equivalent to <code class="code">q</code>", where
+    <code class="code">q</code> is a compound parser, means that <code class="code">p</code> is functionally equivalent to
+    <code class="code">q</code>, that is, it behaves exactly the same as <code class="code">q</code>, although it might be
+    implemented differently. Using <code class="code">p</code> is generally more efficient than using
+    the compound parser <code class="code">q</code> and should therefore be preferred.<br>
+
+<pre><span id="VALreturn"><span class="keyword">val</span> return</span> : <code class="type">'a -> ('a, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">return x</code> always succeeds with the result <code class="code">x</code> without consuming any
+    input.<br>
+</div>
+
+<pre><span id="VALtry_return"><span class="keyword">val</span> try_return</span> : <code class="type">('a -> 'b) -> 'a -> string -> 's <a href="MParser.html#TYPEstate">state</a> -> ('b, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">try_return f x msg s0</code> succeeds with the result <code class="code">f x</code> without consuming
+    input if <code class="code">f x</code> does not raise an exception. Otherwise, it fails with a
+    <code class="code"><span class="constructor">Message_error</span></code> with error message <code class="code">msg</code> at state <code class="code">s0</code>. This combinator
+    is useful where a result must be computed from another parser result and
+    where this computation may raise an exception.<br>
+</div>
+
+<pre><span id="VALtry_return2"><span class="keyword">val</span> try_return2</span> : <code class="type">('a -> 'b -> 'c) -><br>       'a -> 'b -> string -> 's <a href="MParser.html#TYPEstate">state</a> -> ('c, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+A variant of <code class="code">try_return</code> for functions with two parameters.<br>
+</div>
+
+<pre><span id="VALtry_return3"><span class="keyword">val</span> try_return3</span> : <code class="type">('a -> 'b -> 'c -> 'd) -><br>       'a -> 'b -> 'c -> string -> 's <a href="MParser.html#TYPEstate">state</a> -> ('d, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+A variant of <code class="code">try_return</code> for functions with three parameters.<br>
+</div>
+
+<pre><span id="VALfail"><span class="keyword">val</span> fail</span> : <code class="type">string -> ('a, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">fail msg</code> always fails with a <code class="code"><span class="constructor">Message_error</span></code> with error message <code class="code">msg</code>.
+    The <code class="code">fail</code> parser pretends having consumed input, so that all error
+    messages are overwritten.<br>
+</div>
+
+<pre><span id="VALmessage"><span class="keyword">val</span> message</span> : <code class="type">string -> ('a, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">message msg</code> always fails with a <code class="code"><span class="constructor">Message_error</span></code> with error message <code class="code">msg</code>
+    without consuming input, so that the error message is merged with other
+    errors generated for the same input position.<br>
+</div>
+
+<pre><span id="VALzero"><span class="keyword">val</span> zero</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">zero</code> always fails with an <code class="code"><span class="constructor">Unknown_error</span></code> without consuming input.<br>
+</div>
+
+<pre><span id="VALbind"><span class="keyword">val</span> bind</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -> ('a -> ('b, 's) <a href="MParser.html#TYPEt">t</a>) -> ('b, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">p &gt;&gt;= f</code> first applies the parser <code class="code">p</code>, then applies <code class="code">f</code> to the resulting
+    value, and finally applies the resulting parser. Since the second
+    parser can depend on the result of the first parser, it is possible to
+    parse context-sensitive grammars.<br>
+</div>
+
+<pre><span id="VAL(>>=)"><span class="keyword">val</span> (&gt;&gt;=)</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -> ('a -> ('b, 's) <a href="MParser.html#TYPEt">t</a>) -> ('b, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">p &gt;&gt;= f</code> is equivalent to <code class="code">bind p f</code><br>
+</div>
+
+<pre><span id="VAL(>>)"><span class="keyword">val</span> (&gt;&gt;)</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -> ('b, 's) <a href="MParser.html#TYPEt">t</a> -> ('b, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">p &gt;&gt; q</code> is equivalent to <code class="code">p &gt;&gt;= (<span class="keyword">fun</span> _ <span class="keywordsign">-&gt;</span> q)</code>.<br>
+</div>
+
+<pre><span id="VAL(<<)"><span class="keyword">val</span> (&lt;&lt;)</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -> ('b, 's) <a href="MParser.html#TYPEt">t</a> -> ('a, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">p &lt;&lt; q</code> is equivalent to <code class="code">p &gt;&gt;= (<span class="keyword">fun</span> x <span class="keywordsign">-&gt;</span> q &gt;&gt; return x)</code>.<br>
+</div>
+
+<pre><span id="VAL(>>>)"><span class="keyword">val</span> (&gt;&gt;&gt;)</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -> ('b, 's) <a href="MParser.html#TYPEt">t</a> -> ('b, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+Camlp4-compatible alternative to <code class="code">&gt;&gt;</code>.<br>
+</div>
+
+<pre><span id="VAL(<<<)"><span class="keyword">val</span> (&lt;&lt;&lt;)</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -> ('b, 's) <a href="MParser.html#TYPEt">t</a> -> ('a, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+Camlp4-compatible alternative to <code class="code">&lt;&lt;</code>.<br>
+</div>
+
+<pre><span id="VAL(>>$)"><span class="keyword">val</span> (&gt;&gt;$)</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -> 'b -> ('b, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">p &gt;&gt;$ x</code> is equivalent to <code class="code">p &gt;&gt; return x</code>.<br>
+</div>
+
+<pre><span id="VAL(>>?)"><span class="keyword">val</span> (&gt;&gt;?)</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -> ('b, 's) <a href="MParser.html#TYPEt">t</a> -> ('b, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">p &gt;&gt;? q</code> behaves like <code class="code">p &gt;&gt; q</code>, but if <code class="code">q</code> fails without consuming input,
+    it backtracks and pretends not having consumed input, even if <code class="code">p</code> has
+    consumed input.<br>
+</div>
+
+<pre><span id="VAL(|>>)"><span class="keyword">val</span> (|&gt;&gt;)</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -> ('a -> 'b) -> ('b, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">p |&gt;&gt; f</code> is equivalent to <code class="code">p &gt;&gt;= (<span class="keyword">fun</span> x <span class="keywordsign">-&gt;</span> return (f x))</code>.<br>
+</div>
+
+<pre><span id="VALpipe2"><span class="keyword">val</span> pipe2</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -><br>       ('b, 's) <a href="MParser.html#TYPEt">t</a> -> ('a -> 'b -> 'c) -> ('c, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+A variant of <code class="code">(|&gt;&gt;)</code> for functions with two parameters.<br>
+</div>
+
+<pre><span id="VALpipe3"><span class="keyword">val</span> pipe3</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -><br>       ('b, 's) <a href="MParser.html#TYPEt">t</a> -><br>       ('c, 's) <a href="MParser.html#TYPEt">t</a> -> ('a -> 'b -> 'c -> 'd) -> ('d, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+A variant of <code class="code">(|&gt;&gt;)</code> for functions with three parameters.<br>
+</div>
+
+<pre><span id="VALpipe4"><span class="keyword">val</span> pipe4</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -><br>       ('b, 's) <a href="MParser.html#TYPEt">t</a> -><br>       ('c, 's) <a href="MParser.html#TYPEt">t</a> -><br>       ('d, 's) <a href="MParser.html#TYPEt">t</a> -> ('a -> 'b -> 'c -> 'd -> 'e) -> ('e, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+A variant of <code class="code">(|&gt;&gt;)</code> for functions with four parameters.<br>
+</div>
+
+<pre><span id="VAL(<|>)"><span class="keyword">val</span> (&lt;|&gt;)</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -> ('a, 's) <a href="MParser.html#TYPEt">t</a> -> ('a, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">p &lt;|&gt; q</code> first applies <code class="code">p</code>. If <code class="code">p</code> fails without consuming input, it
+    applies <code class="code">q</code>.<br>
+</div>
+
+<pre><span id="VALchoice"><span class="keyword">val</span> choice</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> list -> ('a, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">choice [p1; p2; ...; pn ]</code> is equivalent to <code class="code">p1 &lt;|&gt; p2 &lt;|&gt; ... &lt;|&gt; pn
+    &lt;|&gt; zero</code>.<br>
+</div>
+
+<pre><span id="VALattempt"><span class="keyword">val</span> attempt</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -> ('a, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">attempt p</code> behaves like <code class="code">p</code>, but if <code class="code">p</code> fails after consuming input, it
+    backtracks and pretends not having consumed input. The error message of
+    <code class="code">p</code> is wrapped inside a <code class="code"><span class="constructor">Backtrack_error</span></code>.<br>
+</div>
+
+<pre><span id="VAL(<?>)"><span class="keyword">val</span> (&lt;?&gt;)</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -> string -> ('a, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">p &lt;?&gt; label</code> attaches the label <code class="code">label</code> to <code class="code">p</code>. If <code class="code">p</code> fails without
+    consuming input, the error message of <code class="code">p</code> is replaced by an
+    <code class="code"><span class="constructor">Expected_error</span></code> with the label <code class="code">label</code>.<br>
+</div>
+
+<pre><span id="VAL(<??>)"><span class="keyword">val</span> (&lt;??&gt;)</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -> string -> ('a, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">p &lt;??&gt; label</code> behaves like <code class="code">p &lt;?&gt; label</code>, but if <code class="code">p</code> fails after
+    consuming input, the error message of <code class="code">p</code> is wrapped inside a
+    <code class="code"><span class="constructor">Compound_error</span></code>.<br>
+</div>
+
+<pre><span id="VALlook_ahead"><span class="keyword">val</span> look_ahead</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -> ('a, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">look_ahead p</code> behaves like <code class="code">p</code>, but restores the original state after
+    parsing. It always returns an empty reply.<br>
+</div>
+
+<pre><span id="VALfollowed_by"><span class="keyword">val</span> followed_by</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -> string -> (unit, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">followed_by p msg</code> succeeds without consuming input and returns <code class="code">()</code> if
+    <code class="code">p</code> succeeds at the current position. Otherwise, it fails without
+    consuming input and returns an <code class="code"><span class="constructor">Expected_error</span></code> with error message
+    <code class="code">msg</code>.<br>
+</div>
+
+<pre><span id="VALnot_followed_by"><span class="keyword">val</span> not_followed_by</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -> string -> (unit, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">not_followed_by p msg</code> succeeds without consuming input and returns <code class="code">()</code>
+    if <code class="code">p</code> does not succeed at the current position. Otherwise, it fails
+    without consuming input and returns an <code class="code"><span class="constructor">Unexpected_error</span></code> with error
+    message <code class="code">msg</code>.<br>
+</div>
+
+<pre><span id="VALopt"><span class="keyword">val</span> opt</span> : <code class="type">'a -> ('a, 's) <a href="MParser.html#TYPEt">t</a> -> ('a, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">opt x p</code> is equivalent to <code class="code">p &lt;|&gt;$ x</code>.<br>
+</div>
+
+<pre><span id="VALoption"><span class="keyword">val</span> option</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -> ('a option, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">option p</code> is equivalent to <code class="code">p &gt;&gt;= (<span class="keyword">fun</span> r <span class="keywordsign">-&gt;</span> return (<span class="constructor">Some</span> r)) &lt;|&gt;$
+    <span class="constructor">None</span></code>.<br>
+</div>
+
+<pre><span id="VALoptional"><span class="keyword">val</span> optional</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -> (unit, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">optional p</code> is equivalent to <code class="code">p &gt;&gt;$ () &lt;|&gt;$ ()</code>.<br>
+</div>
+
+<pre><span id="VALtry_skip"><span class="keyword">val</span> try_skip</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -> (bool, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">try_skip p</code> is equivalent to <code class="code">p &gt;&gt;$ <span class="keyword">true</span> &lt;|&gt;$ <span class="keyword">false</span></code>.<br>
+</div>
+
+<pre><span id="VALpair"><span class="keyword">val</span> pair</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -> ('b, 's) <a href="MParser.html#TYPEt">t</a> -> ('a * 'b, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">pair p q</code> is equivalent to <code class="code"> p &gt;&gt;= (<span class="keyword">fun</span> x <span class="keywordsign">-&gt;</span> q &gt;&gt;= (<span class="keyword">fun</span> y <span class="keywordsign">-&gt;</span> return (x,
+    y)))</code>.<br>
+</div>
+
+<pre><span id="VALmany"><span class="keyword">val</span> many</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -> ('a list, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">many p</code> parses zero or more occurrences of <code class="code">p</code> and returns a list of the
+    results returned by <code class="code">p</code>.<br>
+<b>Raises</b> <code>Failure</code> if <code class="code">p</code> accepts the empty string.<br>
+</div>
+
+<pre><span id="VALmany1"><span class="keyword">val</span> many1</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -> ('a list, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">many1 p</code> parses one or more occurrences of <code class="code">p</code> and returns a list of the
+    results returned by <code class="code">p</code>.<br>
+<b>Raises</b> <code>Failure</code> if <code class="code">p</code> accepts the empty string.<br>
+</div>
+
+<pre><span id="VALmany_rev"><span class="keyword">val</span> many_rev</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -> ('a list, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">many_rev p</code> is equivalent to <code class="code">many p |&gt;&gt; <span class="constructor">List</span>.rev</code>.<br>
+</div>
+
+<pre><span id="VALmany1_rev"><span class="keyword">val</span> many1_rev</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -> ('a list, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">many1_rev p</code> is equivalent to <code class="code">many1 p |&gt;&gt; <span class="constructor">List</span>.rev</code>.<br>
+</div>
+
+<pre><span id="VALskip"><span class="keyword">val</span> skip</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -> (unit, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">skip p</code> is equivalent to <code class="code">p |&gt;&gt; ignore</code>.<br>
+</div>
+
+<pre><span id="VALskip_many"><span class="keyword">val</span> skip_many</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -> (unit, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">skip_many p</code> is equivalent to <code class="code">many p |&gt;&gt; ignore</code>.<br>
+</div>
+
+<pre><span id="VALskip_many1"><span class="keyword">val</span> skip_many1</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -> (unit, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">skip_many1 p</code> is equivalent to <code class="code">many1 p |&gt;&gt; ignore</code>.<br>
+</div>
+
+<pre><span id="VALmany_fold_left"><span class="keyword">val</span> many_fold_left</span> : <code class="type">('a -> 'b -> 'a) -> 'a -> ('b, 's) <a href="MParser.html#TYPEt">t</a> -> ('a, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">many_fold_left f a p</code> is equivalent to <code class="code">many p |&gt;&gt; <span class="constructor">List</span>.fold_left f
+    a</code>.<br>
+</div>
+
+<pre><span id="VALmany1_fold_left"><span class="keyword">val</span> many1_fold_left</span> : <code class="type">('a -> 'b -> 'a) -> 'a -> ('b, 's) <a href="MParser.html#TYPEt">t</a> -> ('a, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">many1_fold_left f a p</code> is equivalent to <code class="code">many1 p |&gt;&gt; <span class="constructor">List</span>.fold_left f
+    a</code>.<br>
+</div>
+
+<pre><span id="VALmany_rev_fold_left"><span class="keyword">val</span> many_rev_fold_left</span> : <code class="type">('a -> 'b -> 'a) -> 'a -> ('b, 's) <a href="MParser.html#TYPEt">t</a> -> ('a, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">many_rev_fold_left f a p</code> is equivalent to <code class="code">many p |&gt;&gt; <span class="constructor">List</span>.rev |&gt;&gt;
+    <span class="constructor">List</span>.fold_left f a</code>.<br>
+</div>
+
+<pre><span id="VALmany1_rev_fold_left"><span class="keyword">val</span> many1_rev_fold_left</span> : <code class="type">('a -> 'b -> 'a) -> 'a -> ('b, 's) <a href="MParser.html#TYPEt">t</a> -> ('a, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">many1_rev_fold_left f a p</code> is equivalent to <code class="code">many1 p |&gt;&gt; <span class="constructor">List</span>.rev |&gt;&gt;
+    <span class="constructor">List</span>.fold_left f a</code>.<br>
+</div>
+
+<pre><span id="VALchain_left"><span class="keyword">val</span> chain_left</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -><br>       ('a -> 'a -> 'a, 's) <a href="MParser.html#TYPEt">t</a> -> 'a -> ('a, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">chain_left p op x</code> parses zero or more occurrences of <code class="code">p</code>, separated by
+    <code class="code">op</code>. It returns the value obtained by the left-associative application
+    of the functions returned by <code class="code">op</code> to the results of <code class="code">p</code>. If there are
+    zero occurrences of <code class="code">p</code>, the value <code class="code">x</code> is returned.<br>
+</div>
+
+<pre><span id="VALchain_left1"><span class="keyword">val</span> chain_left1</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -> ('a -> 'a -> 'a, 's) <a href="MParser.html#TYPEt">t</a> -> ('a, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">chain_left1 p op</code> parses one or more occurrences of <code class="code">p</code>, separated by
+    <code class="code">op</code>. It returns the value obtained by the left-associative application
+    of the functions returned by <code class="code">op</code> to the results of <code class="code">p</code>.<br>
+</div>
+
+<pre><span id="VALchain_right"><span class="keyword">val</span> chain_right</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -><br>       ('a -> 'a -> 'a, 's) <a href="MParser.html#TYPEt">t</a> -> 'a -> ('a, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">chain_right p op x</code> parses zero or more occurrences of <code class="code">p</code>, separated by
+    <code class="code">op</code>. It returns the value obtained by the right-associative
+    application of the functions returned by <code class="code">op</code> to the results of <code class="code">p</code>. If
+    there are zero occurrences of <code class="code">p</code>, the value <code class="code">x</code> is returned.<br>
+</div>
+
+<pre><span id="VALchain_right1"><span class="keyword">val</span> chain_right1</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -> ('a -> 'a -> 'a, 's) <a href="MParser.html#TYPEt">t</a> -> ('a, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">chain_right1 p op</code> parses one or more occurrences of <code class="code">p</code>, separated by
+    <code class="code">op</code>. It returns the value obtained by the right-associative
+    application of the functions returned by <code class="code">op</code> to the results of <code class="code">p</code>.<br>
+</div>
+
+<pre><span id="VALcount"><span class="keyword">val</span> count</span> : <code class="type">int -> ('a, 's) <a href="MParser.html#TYPEt">t</a> -> ('a list, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">count n p</code> parses exactly <code class="code">n</code> occurrences of <code class="code">p</code> and returns a list of
+    the results returned by <code class="code">p</code>.<br>
+</div>
+
+<pre><span id="VALskip_count"><span class="keyword">val</span> skip_count</span> : <code class="type">int -> ('a, 's) <a href="MParser.html#TYPEt">t</a> -> (unit, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">skip_count n p</code> parses exactly <code class="code">n</code> occurrences of <code class="code">p</code> and returns
+    <code class="code">()</code>.<br>
+</div>
+
+<pre><span id="VALbetween"><span class="keyword">val</span> between</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -><br>       ('b, 's) <a href="MParser.html#TYPEt">t</a> -> ('c, 's) <a href="MParser.html#TYPEt">t</a> -> ('c, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">between left right p</code> is equivalent to <code class="code">left &gt;&gt; p &lt;&lt; right</code>.<br>
+</div>
+
+<pre><span id="VALsep_by"><span class="keyword">val</span> sep_by</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -> ('b, 's) <a href="MParser.html#TYPEt">t</a> -> ('a list, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">sep_by p sep</code> parses zero or more occurrences of <code class="code">p</code>, separated by <code class="code">sep</code>.
+    It returns a list of the results returned by <code class="code">p</code>.<br>
+</div>
+
+<pre><span id="VALsep_by1"><span class="keyword">val</span> sep_by1</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -> ('b, 's) <a href="MParser.html#TYPEt">t</a> -> ('a list, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">sep_by1 p sep</code> parses one or more occurrences of <code class="code">p</code>, separated by <code class="code">sep</code>.
+    It returns a list of the results returned by <code class="code">p</code>.<br>
+</div>
+
+<pre><span id="VALsep_end_by"><span class="keyword">val</span> sep_end_by</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -> ('b, 's) <a href="MParser.html#TYPEt">t</a> -> ('a list, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">sep_end_by p sep</code> parses zero or more occurrences of <code class="code">p</code>, separated and
+    optionally ended by <code class="code">sep</code>. It returns a list of the results returned by
+    <code class="code">p</code>.<br>
+</div>
+
+<pre><span id="VALsep_end_by1"><span class="keyword">val</span> sep_end_by1</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -> ('b, 's) <a href="MParser.html#TYPEt">t</a> -> ('a list, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">sep_end_by1 p sep</code> parses one or more occurrences of <code class="code">p</code>, separated and
+    optionally ended by <code class="code">sep</code>. It returns a list of the results returned by
+    <code class="code">p</code>.<br>
+</div>
+
+<pre><span id="VALend_by"><span class="keyword">val</span> end_by</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -> ('b, 's) <a href="MParser.html#TYPEt">t</a> -> ('a list, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">end_by p sep</code> parses zero or more occurrences of <code class="code">p</code>, separated and ended
+    by <code class="code">sep</code>. It returns a list of the results returned by <code class="code">p</code>.<br>
+</div>
+
+<pre><span id="VALend_by1"><span class="keyword">val</span> end_by1</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -> ('b, 's) <a href="MParser.html#TYPEt">t</a> -> ('a list, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">end_by1 p sep</code> parses one or more occurrences of <code class="code">p</code>, separated and ended
+    by <code class="code">sep</code>. It returns a list of the results returned by <code class="code">p</code>.<br>
+</div>
+
+<pre><span id="VALmany_until"><span class="keyword">val</span> many_until</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -> ('b, 's) <a href="MParser.html#TYPEt">t</a> -> ('a list, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">many_until p q</code> parses zero or more occurrences of <code class="code">p</code> until <code class="code">q</code> succeeds
+    and returns a list of the results returned by <code class="code">p</code>. It is equivalent to
+    <code class="code">many (not_followed_by q <span class="string">""</span> &gt;&gt; p) &lt;&lt; q</code>. Note that <code class="code">q</code> is parsed twice
+    and should therefore not have side effects.<br>
+</div>
+
+<pre><span id="VALskip_many_until"><span class="keyword">val</span> skip_many_until</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">t</a> -> ('b, 's) <a href="MParser.html#TYPEt">t</a> -> (unit, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">skip_many_until p q</code> parses zero or more occurrences of <code class="code">p</code> until <code class="code">q</code>
+    succeeds and returns <code class="code">()</code>. It is equivalent to <code class="code">skip_many
+    (not_followed_by q <span class="string">""</span> &gt;&gt; p) &lt;&lt; q</code>. Note that <code class="code">q</code> is parsed twice and
+    should therefore not have side effects.<br>
+</div>
+<br>
+<h2 id="2_Parsersaccessingtheparserstate">Parsers accessing the parser state</h2><br>
+
+<pre><span id="VALget_input"><span class="keyword">val</span> get_input</span> : <code class="type">(<a href="MParser_Char_Stream.html#TYPEt">MParser_Char_Stream.t</a>, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+Returns the input stream.<br>
+</div>
+
+<pre><span id="VALget_index"><span class="keyword">val</span> get_index</span> : <code class="type">(int, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+Returns the current index into the input.<br>
+</div>
+
+<pre><span id="VALget_pos"><span class="keyword">val</span> get_pos</span> : <code class="type">(<a href="MParser.html#TYPEpos">pos</a>, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+Returns the current position.<br>
+</div>
+
+<pre><span id="VALregister_nl"><span class="keyword">val</span> register_nl</span> : <code class="type">int -> int -> (unit, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">register_nl lines chars_after_nl</code> increases the line counter by <code class="code">lines</code>
+    and sets the beginning of the current line to <code class="code">chars_after_nl</code> chars
+    before the current index.<br>
+</div>
+
+<pre><span id="VALset_pos"><span class="keyword">val</span> set_pos</span> : <code class="type"><a href="MParser.html#TYPEpos">pos</a> -> (unit, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+Sets the current position.<br>
+</div>
+
+<pre><span id="VALeof"><span class="keyword">val</span> eof</span> : <code class="type">(unit, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+Parses the end of the input.<br>
+</div>
+<br>
+<h2 id="2_Parsersaccessingtheuserstate">Parsers accessing the user state</h2><br>
+
+<pre><span id="VALget_user_state"><span class="keyword">val</span> get_user_state</span> : <code class="type">('s, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+Returns the current user state of the parser.<br>
+</div>
+
+<pre><span id="VALset_user_state"><span class="keyword">val</span> set_user_state</span> : <code class="type">'s -> (unit, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+Sets the current user state of the parser.<br>
+</div>
+
+<pre><span id="VALupdate_user_state"><span class="keyword">val</span> update_user_state</span> : <code class="type">('s -> 's) -> (unit, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">update_user_state f</code> applies <code class="code">f</code> to the user state of the parser.<br>
+</div>
+<br>
+<h2 id="2_Characterbasedparsers">Character-based parsers</h2>
+<p>
+
+    The following specialized parsers and parser combinators work directly on
+    the characters of the input stream and are therefore more efficient than
+    the general combinators. Generally, the basic character and string
+    parsers only consume input when they succeed.<br>
+
+<pre><span id="VALskip_nchars"><span class="keyword">val</span> skip_nchars</span> : <code class="type">int -> (unit, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">skip_nchars n</code> skips <code class="code">n</code> characters of the input. Newlines are not registered.
+    This parser never fails, even if there are less than <code class="code">n</code> characters left.<br>
+<b>Raises</b> <code>Invalid_argument</code> if <code class="code">n &lt; 0</code>.<br>
+</div>
+
+<pre><span id="VALchar"><span class="keyword">val</span> char</span> : <code class="type">char -> (char, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">char c</code> parses the character <code class="code">c</code>.<br>
+</div>
+
+<pre><span id="VALskip_char"><span class="keyword">val</span> skip_char</span> : <code class="type">char -> (unit, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">skip_char c</code> parses the character <code class="code">c</code> and returns <code class="code">()</code>.<br>
+</div>
+
+<pre><span id="VALany_char"><span class="keyword">val</span> any_char</span> : <code class="type">(char, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+Parses any character and returns it. This parser does not register
+    newlines. Use <code class="code">any_char_or_nl</code> if the current character can be a
+    newline.<br>
+</div>
+
+<pre><span id="VALskip_any_char"><span class="keyword">val</span> skip_any_char</span> : <code class="type">(unit, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+Parses any character and returns <code class="code">()</code>. This parser does not register
+    newlines. Use <code class="code">any_char_or_nl</code> if the current character can be a
+    newline.<br>
+</div>
+
+<pre><span id="VALany_char_or_nl"><span class="keyword">val</span> any_char_or_nl</span> : <code class="type">(char, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">any_char_or_nl</code> is equivalent to <code class="code">newline &lt;|&gt; any_char</code>.<br>
+</div>
+
+<pre><span id="VALskip_any_char_or_nl"><span class="keyword">val</span> skip_any_char_or_nl</span> : <code class="type">(unit, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">skip_any_char_or_nl</code> is equivalent to <code class="code">newline &lt;|&gt; skip_any_char</code>.<br>
+</div>
+
+<pre><span id="VALpeek_char"><span class="keyword">val</span> peek_char</span> : <code class="type">(char, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+Returns the character at the position after the current position or fails
+    if this is not a valid position. This parser does not consume input.<br>
+</div>
+
+<pre><span id="VALstring"><span class="keyword">val</span> string</span> : <code class="type">string -> (string, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">string s</code> parses the string <code class="code">s</code> and returns it.<br>
+</div>
+
+<pre><span id="VALskip_string"><span class="keyword">val</span> skip_string</span> : <code class="type">string -> (unit, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">skip_string s</code> parses the string <code class="code">s</code> and returns <code class="code">()</code>.<br>
+</div>
+
+<pre><span id="VALany_string"><span class="keyword">val</span> any_string</span> : <code class="type">int -> (string, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">any_string n</code> parses any string of <code class="code">n</code> characters and returns it. Fails
+    if there are less than <code class="code">n</code> characters left in the input.<br>
+</div>
+
+<pre><span id="VALmany_chars"><span class="keyword">val</span> many_chars</span> : <code class="type">(char, 's) <a href="MParser.html#TYPEt">t</a> -> (string, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">many_chars p</code> parses zero or more occurrences of <code class="code">p</code> and returns a string
+    of the results returned by <code class="code">p</code>.<br>
+<b>Raises</b> <code>Failure</code> if <code class="code">p</code> accepts the empty string.<br>
+</div>
+
+<pre><span id="VALmany1_chars"><span class="keyword">val</span> many1_chars</span> : <code class="type">(char, 's) <a href="MParser.html#TYPEt">t</a> -> (string, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">many1_chars p</code> parses one or more occurrences of <code class="code">p</code> and returns a string
+    of the results returned by <code class="code">p</code>.<br>
+<b>Raises</b> <code>Failure</code> if <code class="code">p</code> accepts the empty string.<br>
+</div>
+
+<pre><span id="VALskip_many_chars"><span class="keyword">val</span> skip_many_chars</span> : <code class="type">(char, 's) <a href="MParser.html#TYPEt">t</a> -> (unit, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">skip_many_chars p</code> is equivalent to <code class="code">many_chars p |&gt;&gt; ignore</code>.<br>
+</div>
+
+<pre><span id="VALskip_many1_chars"><span class="keyword">val</span> skip_many1_chars</span> : <code class="type">(char, 's) <a href="MParser.html#TYPEt">t</a> -> (unit, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">skip_many1_chars p</code> is equivalent to <code class="code">many_chars p |&gt;&gt; ignore</code>.<br>
+</div>
+
+<pre><span id="VALmany_chars_until"><span class="keyword">val</span> many_chars_until</span> : <code class="type">(char, 's) <a href="MParser.html#TYPEt">t</a> -> (char, 's) <a href="MParser.html#TYPEt">t</a> -> (string, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">many_chars_until p q</code> parses zero or more occurrences of <code class="code">p</code> until <code class="code">q</code>
+    succeeds and returns a string of the results returned by <code class="code">p</code>. It is
+    equivalent to <code class="code">many_chars (not_followed_by q <span class="string">""</span> &gt;&gt; p) &lt;&lt; q</code>. Note that
+    <code class="code">q</code> is parsed twice and should therefore not have side effects.<br>
+</div>
+
+<pre><span id="VALskip_many_chars_until"><span class="keyword">val</span> skip_many_chars_until</span> : <code class="type">(char, 's) <a href="MParser.html#TYPEt">t</a> -> (char, 's) <a href="MParser.html#TYPEt">t</a> -> (unit, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">skip_many_until p q</code> parses zero or more occurrences of <code class="code">p</code> until <code class="code">q</code>
+    succeeds and returns <code class="code">()</code>. It is equivalent to <code class="code">skip_many
+    (not_followed_by q <span class="string">""</span> &gt;&gt; p) &lt;&lt; q</code>. Note that <code class="code">q</code> is parsed twice and
+    should therefore not have side effects.<br>
+</div>
+
+<pre><span id="VALsatisfy"><span class="keyword">val</span> satisfy</span> : <code class="type">(char -> bool) -> (char, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">satisfy p</code> parses a character for which <code class="code">p</code> returns <code class="code"><span class="keyword">true</span></code> and returns
+    the character. It fails with an <code class="code"><span class="constructor">Unknown_error</span></code> if the character at the
+    current position does not satisfy <code class="code">p</code>.<br>
+</div>
+
+<pre><span id="VALsatisfy_l"><span class="keyword">val</span> satisfy_l</span> : <code class="type">(char -> bool) -> string -> (char, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">satisfy_l p label</code> is equivalent to <code class="code">satisfy p &lt;?&gt; label</code>.<br>
+</div>
+
+<pre><span id="VALskip_satisfy"><span class="keyword">val</span> skip_satisfy</span> : <code class="type">(char -> bool) -> (unit, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">skip_satisfy p</code> is equivalent to <code class="code">satisfy |&gt;&gt; ignore</code>.<br>
+</div>
+
+<pre><span id="VALskip_satisfy_l"><span class="keyword">val</span> skip_satisfy_l</span> : <code class="type">(char -> bool) -> string -> (unit, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">skip_satisfy_l p label</code> is equivalent to <code class="code">satisfy_l p label |&gt;&gt;
+    ignore</code>.<br>
+</div>
+
+<pre><span id="VALnsatisfy"><span class="keyword">val</span> nsatisfy</span> : <code class="type">int -> (char -> bool) -> (string, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">nsatisfy n p</code> parses the next <code class="code">n</code> characters if <code class="code">p</code> returns <code class="code"><span class="keyword">true</span></code> for
+    each of them. Otherwise it fails with an <code class="code"><span class="constructor">Unknown_error</span></code> without
+    consuming input.<br>
+</div>
+
+<pre><span id="VALmany_satisfy"><span class="keyword">val</span> many_satisfy</span> : <code class="type">(char -> bool) -> (string, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">many_satisfy p</code> is equivalent to <code class="code">many_chars (satisfy p)</code>.<br>
+</div>
+
+<pre><span id="VALmany1_satisfy"><span class="keyword">val</span> many1_satisfy</span> : <code class="type">(char -> bool) -> (string, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">many1_satisfy p</code> is equivalent to <code class="code">many1_chars (satisfy p)</code>.<br>
+</div>
+
+<pre><span id="VALskip_many_satisfy"><span class="keyword">val</span> skip_many_satisfy</span> : <code class="type">(char -> bool) -> (unit, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">skip_many_satisfy p</code> is equivalent to <code class="code">skip_many (satisfy p)</code>.<br>
+</div>
+
+<pre><span id="VALskip_many1_satisfy"><span class="keyword">val</span> skip_many1_satisfy</span> : <code class="type">(char -> bool) -> (unit, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">skip_many1_satisfy p</code> is equivalent to <code class="code">skip_many1 (satisfy p)</code>.<br>
+</div>
+
+<pre><span id="VALnext_char_satisfies"><span class="keyword">val</span> next_char_satisfies</span> : <code class="type">(char -> bool) -> (unit, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">next_char_satisfies p</code> succeeds without consuming input if <code class="code">p</code> returns
+    <code class="code"><span class="keyword">true</span></code> for the character after the current position. Otherwise it fails
+    with an <code class="code"><span class="constructor">Unknown_error</span></code>.<br>
+</div>
+
+<pre><span id="VALprev_char_satisfies"><span class="keyword">val</span> prev_char_satisfies</span> : <code class="type">(char -> bool) -> (unit, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">prev_char_satisfies p</code> succeeds without consuming input if <code class="code">p</code> returns
+    <code class="code"><span class="keyword">true</span></code> for the character before the current position. Otherwise it fails
+    with an <code class="code"><span class="constructor">Unknown_error</span></code>.<br>
+</div>
+
+<pre><span id="VALany_of"><span class="keyword">val</span> any_of</span> : <code class="type">string -> (char, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">any_of str</code> parses any char occurring in the string <code class="code">str</code> and returns
+    it.<br>
+</div>
+
+<pre><span id="VALnone_of"><span class="keyword">val</span> none_of</span> : <code class="type">string -> (char, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">none_of str</code> parses any char not occurring in the string <code class="code">str</code> and
+    returns it.<br>
+</div>
+
+<pre><span id="VALuppercase"><span class="keyword">val</span> uppercase</span> : <code class="type">(char, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+Parses an English uppercase letter and returns it.<br>
+</div>
+
+<pre><span id="VALlowercase"><span class="keyword">val</span> lowercase</span> : <code class="type">(char, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+Parses an English lowercase letter and returns it.<br>
+</div>
+
+<pre><span id="VALletter"><span class="keyword">val</span> letter</span> : <code class="type">(char, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+Parses an English letter and returns it.<br>
+</div>
+
+<pre><span id="VALdigit"><span class="keyword">val</span> digit</span> : <code class="type">(char, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+Parses a decimal digit and returns it.<br>
+</div>
+
+<pre><span id="VALhex_digit"><span class="keyword">val</span> hex_digit</span> : <code class="type">(char, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+Parses a hexadecimal digit and returns it.<br>
+</div>
+
+<pre><span id="VALoct_digit"><span class="keyword">val</span> oct_digit</span> : <code class="type">(char, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+Parses an octal digit and returns it.<br>
+</div>
+
+<pre><span id="VALalphanum"><span class="keyword">val</span> alphanum</span> : <code class="type">(char, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+Parses an English letter or a decimal digit and returns it.<br>
+</div>
+
+<pre><span id="VALtab"><span class="keyword">val</span> tab</span> : <code class="type">(char, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+Parses a tab character (<code class="code"><span class="string">'\t'</span></code>) and returns it.<br>
+</div>
+
+<pre><span id="VALblank"><span class="keyword">val</span> blank</span> : <code class="type">(char, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+Parses a space or a tab character (<code class="code"><span class="string">' '</span></code> or <code class="code"><span class="string">'\t'</span></code> and returns it.<br>
+</div>
+
+<pre><span id="VALnewline"><span class="keyword">val</span> newline</span> : <code class="type">(char, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+Parses a newline (<code class="code"><span class="string">'\n'</span></code>, <code class="code"><span class="string">'\r'</span></code>, or the sequence <code class="code"><span class="string">'\r'</span>, <span class="string">'\n'</span></code>). If it
+    succeeds, it always returns <code class="code"><span class="string">'\n'</span></code>. The position in the parser state is
+    correctly updated.<br>
+</div>
+
+<pre><span id="VALspace"><span class="keyword">val</span> space</span> : <code class="type">(char, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+Parses a space (<code class="code"><span class="string">' '</span></code>), a tab (<code class="code"><span class="string">'\t'</span></code>) or a newline (<code class="code"><span class="string">'\n'</span></code>, <code class="code"><span class="string">'\r'</span></code>, or
+    the sequence <code class="code"><span class="string">'\r'</span>, <span class="string">'\n'</span></code>). If a newline is parsed, it returns <code class="code"><span class="string">'\n'</span></code> and
+    correctly updates the position in the parser state. Otherwise it returns
+    the parsed character.<br>
+</div>
+
+<pre><span id="VALspaces"><span class="keyword">val</span> spaces</span> : <code class="type">(unit, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">spaces</code> is equivalent to <code class="code">skip_many_chars space</code>.<br>
+</div>
+
+<pre><span id="VALspaces1"><span class="keyword">val</span> spaces1</span> : <code class="type">(unit, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">spaces</code> is equivalent to <code class="code">skip_many_chars1 space</code>.<br>
+</div>
+<br>
+<h2 id="2_Expressionparser">Expression parser</h2><br>
+
+<pre><code><span id="TYPEassoc"><span class="keyword">type</span> <code class="type"></code>assoc</span> = </code></pre><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTassoc.Assoc_none"><span class="constructor">Assoc_none</span></span></code></td>
+<td class="typefieldcomment" align="left" valign="top" ><code>(*</code></td><td class="typefieldcomment" align="left" valign="top" ><div class="info ">
+None-associative operator.<br>
+</div>
+</td><td class="typefieldcomment" align="left" valign="bottom" ><code>*)</code></td>
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTassoc.Assoc_left"><span class="constructor">Assoc_left</span></span></code></td>
+<td class="typefieldcomment" align="left" valign="top" ><code>(*</code></td><td class="typefieldcomment" align="left" valign="top" ><div class="info ">
+Left-associative operator.<br>
+</div>
+</td><td class="typefieldcomment" align="left" valign="bottom" ><code>*)</code></td>
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTassoc.Assoc_right"><span class="constructor">Assoc_right</span></span></code></td>
+<td class="typefieldcomment" align="left" valign="top" ><code>(*</code></td><td class="typefieldcomment" align="left" valign="top" ><div class="info ">
+Right-associative operator.<br>
+</div>
+</td><td class="typefieldcomment" align="left" valign="bottom" ><code>*)</code></td>
+</tr></table>
+
+<div class="info ">
+The associativity of an operator. An operator <code class="code">(<span class="keywordsign">#</span>)</code> is left-associative
+    if <code class="code">a <span class="keywordsign">#</span> b <span class="keywordsign">#</span> c = (a <span class="keywordsign">#</span> b) <span class="keywordsign">#</span> c</code>, right-associative if <code class="code">a <span class="keywordsign">#</span> b <span class="keywordsign">#</span> c = a <span class="keywordsign">#</span> (b <span class="keywordsign">#</span>
+    c)</code>, and non-associative if applying <code class="code">(<span class="keywordsign">#</span>)</code> to an expression with head
+    operator <code class="code">(<span class="keywordsign">#</span>)</code> is not allowed. Note that a value of this type specifies
+    only how an expression like <code class="code">a <span class="keywordsign">#</span> b <span class="keywordsign">#</span> c</code> is parsed, not how it is
+    interpreted semanically.<br>
+</div>
+
+
+<pre><code><span id="TYPEoperator"><span class="keyword">type</span> <code class="type">('a, 's)</code> operator</span> = </code></pre><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELToperator.Infix"><span class="constructor">Infix</span></span> <span class="keyword">of</span> <code class="type">(('a -> 'a -> 'a, 's) <a href="MParser.html#TYPEt">t</a> * <a href="MParser.html#TYPEassoc">assoc</a>)</code></code></td>
+<td class="typefieldcomment" align="left" valign="top" ><code>(*</code></td><td class="typefieldcomment" align="left" valign="top" ><div class="info ">
+Infix operator.<br>
+</div>
+</td><td class="typefieldcomment" align="left" valign="bottom" ><code>*)</code></td>
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELToperator.Prefix"><span class="constructor">Prefix</span></span> <span class="keyword">of</span> <code class="type">('a -> 'a, 's) <a href="MParser.html#TYPEt">t</a></code></code></td>
+<td class="typefieldcomment" align="left" valign="top" ><code>(*</code></td><td class="typefieldcomment" align="left" valign="top" ><div class="info ">
+Prefix operator.<br>
+</div>
+</td><td class="typefieldcomment" align="left" valign="bottom" ><code>*)</code></td>
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELToperator.Postfix"><span class="constructor">Postfix</span></span> <span class="keyword">of</span> <code class="type">('a -> 'a, 's) <a href="MParser.html#TYPEt">t</a></code></code></td>
+<td class="typefieldcomment" align="left" valign="top" ><code>(*</code></td><td class="typefieldcomment" align="left" valign="top" ><div class="info ">
+Postfix operator.<br>
+</div>
+</td><td class="typefieldcomment" align="left" valign="bottom" ><code>*)</code></td>
+</tr></table>
+
+<div class="info ">
+The type of operators on type <code class="code"><span class="keywordsign">'</span>a</code>. The function returned by the parser
+    argument to the <code class="code"><span class="constructor">Infix</span></code>, <code class="code"><span class="constructor">Prefix</span></code>, and <code class="code"><span class="constructor">Postfix</span></code> constructor is used to
+    build the result of applying the operator to its operands.<br>
+</div>
+
+
+<pre><span id="VALexpression"><span class="keyword">val</span> expression</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEoperator">operator</a> list list -><br>       ('a, 's) <a href="MParser.html#TYPEt">t</a> -> ('a, 's) <a href="MParser.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">expression operators term</code> parses any well-formed expression that can
+    built from the basic terms parsed by <code class="code">term</code> and the operators specified in
+    the operator table <code class="code">operators</code>. The operator table is a list of
+    <code class="code">operator</code> lists that is ordered in descending precedence. All elements
+    in one list of <code class="code">operators</code> have the same precedence, but may have
+    different associativities.
+<p>
+
+    Adjacent prefix and postfix operators of the same precedence are not
+    well-formed. For example, if <code class="code">(-)</code> denotes prefix negation, <code class="code">--x</code> is not
+    a well-formed expression (if <code class="code">(--)</code> does not denote an operator on its
+    own). If a prefix and a postfix operator of the same precedence are
+    applied to an expression, the prefix operator is applied before the
+    postfix operator.
+<p>
+
+    The following example demonstrates the usage of the <code class="code">expression</code> parser.
+    It implements a minimalistic calculator that can be used to evaluate
+    expressions like <code class="code">eval <span class="string">"(1 + 2 * 3) / -2"</span></code>, which returns <code class="code">-3</code>.
+    <pre class="codepre"><code class="code">&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">open</span>&nbsp;<span class="constructor">MParser</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">open</span>&nbsp;<span class="constructor">Tokens</span>
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">exception</span>&nbsp;<span class="constructor">Syntax_error</span>
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">let</span>&nbsp;infix&nbsp;sym&nbsp;f&nbsp;assoc&nbsp;=&nbsp;<span class="constructor">Infix</span>&nbsp;&nbsp;(skip_symbol&nbsp;sym&nbsp;&gt;&gt;&nbsp;return&nbsp;f,&nbsp;assoc)
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">let</span>&nbsp;prefix&nbsp;sym&nbsp;f&nbsp;=&nbsp;<span class="constructor">Prefix</span>&nbsp;(skip_symbol&nbsp;sym&nbsp;&gt;&gt;&nbsp;return&nbsp;f)
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">let</span>&nbsp;negate&nbsp;x&nbsp;=&nbsp;-x
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">let</span>&nbsp;operators&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;[
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;prefix&nbsp;<span class="string">"-"</span>&nbsp;negate&nbsp;];
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;infix&nbsp;<span class="string">"*"</span>&nbsp;(&nbsp;*&nbsp;)&nbsp;<span class="constructor">Assoc_left</span>;&nbsp;infix&nbsp;<span class="string">"/"</span>&nbsp;(&nbsp;/&nbsp;)&nbsp;<span class="constructor">Assoc_left</span>&nbsp;];
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;infix&nbsp;<span class="string">"+"</span>&nbsp;(&nbsp;+&nbsp;)&nbsp;<span class="constructor">Assoc_left</span>;&nbsp;infix&nbsp;<span class="string">"-"</span>&nbsp;(&nbsp;-&nbsp;)&nbsp;<span class="constructor">Assoc_left</span>&nbsp;];
+&nbsp;&nbsp;&nbsp;&nbsp;]
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">let</span>&nbsp;<span class="keyword">rec</span>&nbsp;term&nbsp;s&nbsp;=&nbsp;(parens&nbsp;expr&nbsp;&lt;|&gt;&nbsp;decimal)&nbsp;s
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">and</span>&nbsp;expr&nbsp;s&nbsp;=&nbsp;expression&nbsp;operators&nbsp;term&nbsp;s
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">let</span>&nbsp;eval&nbsp;s&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">match</span>&nbsp;parse_string&nbsp;expr&nbsp;s&nbsp;()&nbsp;<span class="keyword">with</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Success</span>&nbsp;x&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;x
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Failed</span>&nbsp;(msg,&nbsp;_)&nbsp;<span class="keywordsign">-&gt;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print_string&nbsp;msg;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;raise&nbsp;<span class="constructor">Syntax_error</span>
+&nbsp;&nbsp;&nbsp;&nbsp;</code></pre><br>
+</div>
+<br>
+<h2 id="2_Regexprelatedfeatures">Regexp-related features</h2><br>
+
+<pre><span class="keyword">module</span> <a href="MParser.MakeRegexp.html">MakeRegexp</a> <code class="code">(</code><code class="code"><span class="constructor">Regexp</span></code><code class="code"> : </code><code class="type"><a href="MParser_Sig.Regexp.html">MParser_Sig.Regexp</a></code><code class="code">) </code>: <code class="code"><span class="keyword">sig</span></code> <a href="MParser.MakeRegexp.html">..</a> <code class="code"><span class="keyword">end</span></code></pre></body></html>

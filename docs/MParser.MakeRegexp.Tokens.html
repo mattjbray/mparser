@@ -1,0 +1,166 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link rel="Up" href="MParser.MakeRegexp.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Index of module types" rel=Appendix href="index_module_types.html">
+<link title="MParser" rel="Chapter" href="MParser.html">
+<link title="MParser_Sig" rel="Chapter" href="MParser_Sig.html">
+<link title="MParser_Char_Stream" rel="Chapter" href="MParser_Char_Stream.html">
+<link title="MParser_PCRE" rel="Chapter" href="MParser_PCRE.html">
+<link title="MParser_RE" rel="Chapter" href="MParser_RE.html"><title>MParser.MakeRegexp.Tokens</title>
+</head>
+<body>
+<div class="navbar">&nbsp;<a class="up" href="MParser.MakeRegexp.html" title="MParser.MakeRegexp">Up</a>
+&nbsp;</div>
+<h1>Module <a href="type_MParser.MakeRegexp.Tokens.html">MParser.MakeRegexp.Tokens</a></h1>
+
+<pre><span class="keyword">module</span> Tokens: <code class="code"><span class="keyword">sig</span></code> <a href="MParser.MakeRegexp.Tokens.html">..</a> <code class="code"><span class="keyword">end</span></code></pre><div class="info module top">
+Predefined token parsers.
+<p>
+
+      This module provides parsers for tokens that are commonly used in parsing
+      computer languages. All parsers in this module skip the spaces (as
+      defined by the <a href="MParser.html#VALspaces"><code class="code"><span class="constructor">MParser</span>.spaces</code></a> parser) that occur after a token. Where
+      they are applied to a user-defined parser <code class="code">p</code>, however, they do not skip
+      the spaces occurring after the characters parsed by <code class="code">p</code>. For example,
+      <code class="code">parens p</code> is equivalent to <code class="code">char <span class="string">'('</span> &gt;&gt; spaces &gt;&gt; p &lt;&lt; char <span class="string">')'</span> &lt;&lt; spaces</code>.<br>
+</div>
+<hr width="100%">
+
+<pre><span id="VALsymbol"><span class="keyword">val</span> symbol</span> : <code class="type">string -> (string, 's) <a href="MParser.html#TYPEt">MParser.t</a></code></pre><div class="info ">
+<code class="code">symbol sym</code> parses the literal string <code class="code">sym</code> and returns it.<br>
+</div>
+
+<pre><span id="VALskip_symbol"><span class="keyword">val</span> skip_symbol</span> : <code class="type">string -> (unit, 's) <a href="MParser.html#TYPEt">MParser.t</a></code></pre><div class="info ">
+<code class="code">skip_symbol sym</code> parses the literal string <code class="code">sym</code> and returns <code class="code">()</code>.<br>
+</div>
+
+<pre><span id="VALparens"><span class="keyword">val</span> parens</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">MParser.t</a> -> ('a, 's) <a href="MParser.html#TYPEt">MParser.t</a></code></pre><div class="info ">
+<code class="code">parens p</code> parses <code class="code">p</code> between parentheses <code class="code"><span class="string">'('</span></code> and <code class="code"><span class="string">')'</span></code>.<br>
+</div>
+
+<pre><span id="VALbraces"><span class="keyword">val</span> braces</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">MParser.t</a> -> ('a, 's) <a href="MParser.html#TYPEt">MParser.t</a></code></pre><div class="info ">
+<code class="code">braces p</code> parses <code class="code">p</code> between curly braces <code class="code"><span class="string">'{'</span></code> and <code class="code"><span class="string">'}'</span></code>.<br>
+</div>
+
+<pre><span id="VALbrackets"><span class="keyword">val</span> brackets</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">MParser.t</a> -> ('a, 's) <a href="MParser.html#TYPEt">MParser.t</a></code></pre><div class="info ">
+<code class="code">brackets p</code> parses <code class="code">p</code> between angle brackets <code class="code"><span class="string">'&lt;'</span></code> and <code class="code"><span class="string">'&gt;'</span></code>.<br>
+</div>
+
+<pre><span id="VALsquares"><span class="keyword">val</span> squares</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">MParser.t</a> -> ('a, 's) <a href="MParser.html#TYPEt">MParser.t</a></code></pre><div class="info ">
+<code class="code">squares p</code> parses <code class="code">p</code> between square brackets <code class="code"><span class="string">'['</span></code> and <code class="code"><span class="string">']'</span></code>.<br>
+</div>
+
+<pre><span id="VALsemi"><span class="keyword">val</span> semi</span> : <code class="type">(char, 's) <a href="MParser.html#TYPEt">MParser.t</a></code></pre><div class="info ">
+Parses a semicolon <code class="code"><span class="string">';'</span></code>.<br>
+</div>
+
+<pre><span id="VALcomma"><span class="keyword">val</span> comma</span> : <code class="type">(char, 's) <a href="MParser.html#TYPEt">MParser.t</a></code></pre><div class="info ">
+Parses a comma <code class="code"><span class="string">','</span></code>.<br>
+</div>
+
+<pre><span id="VALcolon"><span class="keyword">val</span> colon</span> : <code class="type">(char, 's) <a href="MParser.html#TYPEt">MParser.t</a></code></pre><div class="info ">
+Parses a colon <code class="code"><span class="string">':'</span></code>.<br>
+</div>
+
+<pre><span id="VALdot"><span class="keyword">val</span> dot</span> : <code class="type">(char, 's) <a href="MParser.html#TYPEt">MParser.t</a></code></pre><div class="info ">
+Parses a dot <code class="code"><span class="string">'.'</span></code>.<br>
+</div>
+
+<pre><span id="VALsemi_sep"><span class="keyword">val</span> semi_sep</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">MParser.t</a> -> ('a list, 's) <a href="MParser.html#TYPEt">MParser.t</a></code></pre><div class="info ">
+<code class="code">semi_sep p</code> parses zero or more occurrences of <code class="code">p</code>, separated by <code class="code"><span class="string">';'</span></code>.
+        It returns a list of the results returned by <code class="code">p</code>.<br>
+</div>
+
+<pre><span id="VALsemi_sep1"><span class="keyword">val</span> semi_sep1</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">MParser.t</a> -> ('a list, 's) <a href="MParser.html#TYPEt">MParser.t</a></code></pre><div class="info ">
+<code class="code">semi_sep1 p</code> parses one or more occurrences of <code class="code">p</code>, separated by <code class="code"><span class="string">';'</span></code>.
+        It returns a list of the results returned by <code class="code">p</code>.<br>
+</div>
+
+<pre><span id="VALsemi_sep_end"><span class="keyword">val</span> semi_sep_end</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">MParser.t</a> -> ('a list, 's) <a href="MParser.html#TYPEt">MParser.t</a></code></pre><div class="info ">
+<code class="code">semi_sep_end p</code> parses zero or more occurrences of <code class="code">p</code>, separated and
+        optionally ended by <code class="code"><span class="string">';'</span></code>. It returns a list of the results returned by
+        <code class="code">p</code>.<br>
+</div>
+
+<pre><span id="VALsemi_sep_end1"><span class="keyword">val</span> semi_sep_end1</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">MParser.t</a> -> ('a list, 's) <a href="MParser.html#TYPEt">MParser.t</a></code></pre><div class="info ">
+<code class="code">semi_sep_end1 p</code> parses one or more occurrences of <code class="code">p</code>, separated and
+        optionally ended by <code class="code"><span class="string">';'</span></code>. It returns a list of the results returned by
+        <code class="code">p</code>.<br>
+</div>
+
+<pre><span id="VALsemi_end"><span class="keyword">val</span> semi_end</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">MParser.t</a> -> ('a list, 's) <a href="MParser.html#TYPEt">MParser.t</a></code></pre><div class="info ">
+<code class="code">semi_end p</code> parses zero or more occurrences of <code class="code">p</code>, separated and ended
+        by <code class="code"><span class="string">';'</span></code>. It returns a list of the results returned by <code class="code">p</code>.<br>
+</div>
+
+<pre><span id="VALsemi_end1"><span class="keyword">val</span> semi_end1</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">MParser.t</a> -> ('a list, 's) <a href="MParser.html#TYPEt">MParser.t</a></code></pre><div class="info ">
+<code class="code">semi_sep_end1 p</code> parses one or more occurrences of <code class="code">p</code>, separated and
+        ended by <code class="code"><span class="string">';'</span></code>. It returns a list of the results returned by <code class="code">p</code>.<br>
+</div>
+
+<pre><span id="VALcomma_sep"><span class="keyword">val</span> comma_sep</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">MParser.t</a> -> ('a list, 's) <a href="MParser.html#TYPEt">MParser.t</a></code></pre><div class="info ">
+<code class="code">comma_sep p</code> parses zero or more occurrences of <code class="code">p</code>, separated by
+        <code class="code"><span class="string">','</span></code>. It returns a list of the results returned by <code class="code">p</code>.<br>
+</div>
+
+<pre><span id="VALcomma_sep1"><span class="keyword">val</span> comma_sep1</span> : <code class="type">('a, 's) <a href="MParser.html#TYPEt">MParser.t</a> -> ('a list, 's) <a href="MParser.html#TYPEt">MParser.t</a></code></pre><div class="info ">
+<code class="code">comma_sep1 p</code> parses one or more occurrences of <code class="code">p</code>, separated by
+        <code class="code"><span class="string">','</span></code>. It returns a list of the results returned by <code class="code">p</code>.<br>
+</div>
+
+<pre><span id="VALchar_literal"><span class="keyword">val</span> char_literal</span> : <code class="type">(char, 's) <a href="MParser.html#TYPEt">MParser.t</a></code></pre><div class="info ">
+Parses a character literal as defined in the OCaml language and returns
+        the character. The literal may contain an escape sequence.<br>
+</div>
+
+<pre><span id="VALstring_literal"><span class="keyword">val</span> string_literal</span> : <code class="type">(string, 's) <a href="MParser.html#TYPEt">MParser.t</a></code></pre><div class="info ">
+Parses a string literal as defined in the OCaml language and returns the
+        string. The literal may contain escape sequences.<br>
+</div>
+
+<pre><span id="VALdecimal"><span class="keyword">val</span> decimal</span> : <code class="type">(int, 's) <a href="MParser.html#TYPEt">MParser.t</a></code></pre><div class="info ">
+Parses a decimal natural number and returns it as an integer value.
+        Fails with a <code class="code"><span class="constructor">Message_error</span></code> if the parsed number is larger than
+        <code class="code">max_int</code>.<br>
+</div>
+
+<pre><span id="VALhexadecimal"><span class="keyword">val</span> hexadecimal</span> : <code class="type">(int, 's) <a href="MParser.html#TYPEt">MParser.t</a></code></pre><div class="info ">
+Parses a hexadecimal natural number as defined in the OCaml language
+        (prefixed with <code class="code"><span class="string">"0x"</span></code> or <code class="code"><span class="string">"0X"</span></code>) and returns it as an integer value.
+        Fails with a <code class="code"><span class="constructor">Message_error</span></code> if the parsed number is larger than
+        <code class="code">max_int</code>.<br>
+</div>
+
+<pre><span id="VALoctal"><span class="keyword">val</span> octal</span> : <code class="type">(int, 's) <a href="MParser.html#TYPEt">MParser.t</a></code></pre><div class="info ">
+Parses an octal natural number as defined in the OCaml language
+        (prefixed with <code class="code"><span class="string">"0o"</span></code> or <code class="code"><span class="string">"0O"</span></code>) and returns it as an integer value.
+        Fails with a <code class="code"><span class="constructor">Message_error</span></code> if the parsed number is larger than
+        <code class="code">max_int</code>.<br>
+</div>
+
+<pre><span id="VALbinary"><span class="keyword">val</span> binary</span> : <code class="type">(int, 's) <a href="MParser.html#TYPEt">MParser.t</a></code></pre><div class="info ">
+Parses a binary natural number as defined in the OCaml language
+        (prefixed with <code class="code"><span class="string">"0b"</span></code> or <code class="code"><span class="string">"0B"</span></code>) and returns it as an integer value.
+        Fails with a <code class="code"><span class="constructor">Message_error</span></code> if the parsed number is larger than
+        <code class="code">max_int</code>.<br>
+</div>
+
+<pre><span id="VALinteger"><span class="keyword">val</span> integer</span> : <code class="type">(int, 's) <a href="MParser.html#TYPEt">MParser.t</a></code></pre><div class="info ">
+Parses a decimal integer number and returns its value. Fails with a
+        <code class="code"><span class="constructor">Message_error</span></code> if the parsed number is smaller than <code class="code">min_int</code> or larger
+        than <code class="code">max_int</code>.<br>
+</div>
+
+<pre><span id="VALfloat"><span class="keyword">val</span> float</span> : <code class="type">(float, 's) <a href="MParser.html#TYPEt">MParser.t</a></code></pre><div class="info ">
+Parses floating-point literal as defined in the OCaml language and
+        returns its value. Fails with a <code class="code"><span class="constructor">Message_error</span></code> if the parsed number is
+        not a valid representation of a <code class="code">float</code> value.<br>
+</div>
+</body></html>

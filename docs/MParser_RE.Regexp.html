@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link rel="Up" href="MParser_RE.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Index of module types" rel=Appendix href="index_module_types.html">
+<link title="MParser" rel="Chapter" href="MParser.html">
+<link title="MParser_Sig" rel="Chapter" href="MParser_Sig.html">
+<link title="MParser_Char_Stream" rel="Chapter" href="MParser_Char_Stream.html">
+<link title="MParser_PCRE" rel="Chapter" href="MParser_PCRE.html">
+<link title="MParser_RE" rel="Chapter" href="MParser_RE.html"><title>MParser_RE.Regexp</title>
+</head>
+<body>
+<div class="navbar">&nbsp;<a class="up" href="MParser_RE.html" title="MParser_RE">Up</a>
+&nbsp;</div>
+<h1>Module <a href="type_MParser_RE.Regexp.html">MParser_RE.Regexp</a></h1>
+
+<pre><span class="keyword">module</span> Regexp: <code class="type"><a href="MParser_Sig.Regexp.html">MParser_Sig.Regexp</a></code><code class="type"> </code></pre><hr width="100%">
+<br>
+A pluggable regular expression engine.<br>
+
+<pre><span id="TYPEt"><span class="keyword">type</span> <code class="type"></code>t</span> </pre>
+<div class="info ">
+A compiled regular expression.<br>
+</div>
+
+
+<pre><span id="TYPEsubstrings"><span class="keyword">type</span> <code class="type"></code>substrings</span> </pre>
+<div class="info ">
+Substrings matched by a regular expression.<br>
+</div>
+
+
+<pre><span id="VALmake"><span class="keyword">val</span> make</span> : <code class="type">string -> <a href="MParser_Sig.Regexp.html#TYPEt">t</a></code></pre><div class="info ">
+Compiles a regular expression.<br>
+</div>
+
+<pre><span id="VALget_substring"><span class="keyword">val</span> get_substring</span> : <code class="type"><a href="MParser_Sig.Regexp.html#TYPEsubstrings">substrings</a> -> int -> string option</code></pre><div class="info ">
+Extracts a single substring.
+      Returns None if the group did not match.<br>
+</div>
+
+<pre><span id="VALget_all_substrings"><span class="keyword">val</span> get_all_substrings</span> : <code class="type"><a href="MParser_Sig.Regexp.html#TYPEsubstrings">substrings</a> -> string array</code></pre><div class="info ">
+Extracts all the matched substrings.
+      Includes the full match at index 0.
+      If a subpattern did not capture a substring, the empty
+      string is returned in the corresponding position instead.<br>
+</div>
+
+<pre><span id="VALexec"><span class="keyword">val</span> exec</span> : <code class="type">rex:<a href="MParser_Sig.Regexp.html#TYPEt">t</a> -><br>       pos:int -> Bytes.t -> <a href="MParser_Sig.Regexp.html#TYPEsubstrings">substrings</a> option</code></pre><div class="info ">
+Attemts to match the byte-buffer with a regular expression, starting
+      from the position <code class="code">pos</code>. Returns the matched substrings or <code class="code"><span class="constructor">None</span></code>
+      on failure.<br>
+</div>
+</body></html>

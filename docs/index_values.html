@@ -1,0 +1,1058 @@
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Index of module types" rel=Appendix href="index_module_types.html">
+<link title="MParser" rel="Chapter" href="MParser.html">
+<link title="MParser_Sig" rel="Chapter" href="MParser_Sig.html">
+<link title="MParser_Char_Stream" rel="Chapter" href="MParser_Char_Stream.html">
+<link title="MParser_PCRE" rel="Chapter" href="MParser_PCRE.html">
+<link title="MParser_RE" rel="Chapter" href="MParser_RE.html"><title>Index of values</title>
+</head>
+<body>
+<div class="navbar">&nbsp;<a class="up" href="index.html" title="Index">Up</a>
+&nbsp;</div>
+<h1>Index of values</h1>
+<table>
+<tr><td align="left"><br></td></tr>
+<tr><td><a href="MParser.html#VAL(<<)">(&lt;&lt;)</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">p &lt;&lt; q</code> is equivalent to <code class="code">p &gt;&gt;= (<span class="keyword">fun</span> x <span class="keywordsign">-&gt;</span> q &gt;&gt; return x)</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VAL(<<<)">(&lt;&lt;&lt;)</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+Camlp4-compatible alternative to <code class="code">&lt;&lt;</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VAL(<?>)">(&lt;?&gt;)</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">p &lt;?&gt; label</code> attaches the label <code class="code">label</code> to <code class="code">p</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VAL(<??>)">(&lt;??&gt;)</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">p &lt;??&gt; label</code> behaves like <code class="code">p &lt;?&gt; label</code>, but if <code class="code">p</code> fails after
+    consuming input, the error message of <code class="code">p</code> is wrapped inside a
+    <code class="code"><span class="constructor">Compound_error</span></code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VAL(<|>)">(&lt;|&gt;)</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">p &lt;|&gt; q</code> first applies <code class="code">p</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VAL(>>$)">(&gt;&gt;$)</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">p &gt;&gt;$ x</code> is equivalent to <code class="code">p &gt;&gt; return x</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VAL(>>)">(&gt;&gt;)</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">p &gt;&gt; q</code> is equivalent to <code class="code">p &gt;&gt;= (<span class="keyword">fun</span> _ <span class="keywordsign">-&gt;</span> q)</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VAL(>>=)">(&gt;&gt;=)</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">p &gt;&gt;= f</code> is equivalent to <code class="code">bind p f</code>
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VAL(>>>)">(&gt;&gt;&gt;)</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+Camlp4-compatible alternative to <code class="code">&gt;&gt;</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VAL(>>?)">(&gt;&gt;?)</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">p &gt;&gt;? q</code> behaves like <code class="code">p &gt;&gt; q</code>, but if <code class="code">q</code> fails without consuming input,
+    it backtracks and pretends not having consumed input, even if <code class="code">p</code> has
+    consumed input.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VAL(|>>)">(|&gt;&gt;)</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">p |&gt;&gt; f</code> is equivalent to <code class="code">p &gt;&gt;= (<span class="keyword">fun</span> x <span class="keywordsign">-&gt;</span> return (f x))</code>.
+</div>
+</td></tr>
+<tr><td align="left"><br>A</td></tr>
+<tr><td><a href="MParser.html#VALadvance_state">advance_state</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">advance_state s n</code> returns the state <code class="code">s</code> with the position advanced by
+    <code class="code">n</code> characters if the current position of <code class="code">s</code> is a valid position.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALadvance_state_nl">advance_state_nl</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">advance_state_nl s n</code> returns the state <code class="code">s</code> with the position advanced by
+    <code class="code">n</code> characters and the line counter increased by one if the current
+    position of <code class="code">s</code> is a valid position.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALalphanum">alphanum</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+Parses an English letter or a decimal digit and returns it.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALany_char">any_char</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+Parses any character and returns it.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALany_char_or_nl">any_char_or_nl</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">any_char_or_nl</code> is equivalent to <code class="code">newline &lt;|&gt; any_char</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALany_of">any_of</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">any_of str</code> parses any char occurring in the string <code class="code">str</code> and returns
+    it.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALany_string">any_string</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">any_string n</code> parses any string of <code class="code">n</code> characters and returns it.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALattempt">attempt</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">attempt p</code> behaves like <code class="code">p</code>, but if <code class="code">p</code> fails after consuming input, it
+    backtracks and pretends not having consumed input.
+</div>
+</td></tr>
+<tr><td align="left"><br>B</td></tr>
+<tr><td><a href="MParser.html#VALbacktrack_error">backtrack_error</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+Creates a <code class="code"><span class="constructor">Backtrack_error</span></code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALbetween">between</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">between left right p</code> is equivalent to <code class="code">left &gt;&gt; p &lt;&lt; right</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.MakeRegexp.Tokens.html#VALbinary">binary</a> [<a href="MParser.MakeRegexp.Tokens.html">MParser.MakeRegexp.Tokens</a>]</td>
+<td><div class="info">
+Parses a binary natural number as defined in the OCaml language
+        (prefixed with <code class="code"><span class="string">"0b"</span></code> or <code class="code"><span class="string">"0B"</span></code>) and returns it as an integer value.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALbind">bind</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">p &gt;&gt;= f</code> first applies the parser <code class="code">p</code>, then applies <code class="code">f</code> to the resulting
+    value, and finally applies the resulting parser.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALblank">blank</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+Parses a space or a tab character (<code class="code"><span class="string">' '</span></code> or <code class="code"><span class="string">'\t'</span></code> and returns it.
+</div>
+</td></tr>
+<tr><td><a href="MParser.MakeRegexp.Tokens.html#VALbraces">braces</a> [<a href="MParser.MakeRegexp.Tokens.html">MParser.MakeRegexp.Tokens</a>]</td>
+<td><div class="info">
+<code class="code">braces p</code> parses <code class="code">p</code> between curly braces <code class="code"><span class="string">'{'</span></code> and <code class="code"><span class="string">'}'</span></code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.MakeRegexp.Tokens.html#VALbrackets">brackets</a> [<a href="MParser.MakeRegexp.Tokens.html">MParser.MakeRegexp.Tokens</a>]</td>
+<td><div class="info">
+<code class="code">brackets p</code> parses <code class="code">p</code> between angle brackets <code class="code"><span class="string">'&lt;'</span></code> and <code class="code"><span class="string">'&gt;'</span></code>.
+</div>
+</td></tr>
+<tr><td align="left"><br>C</td></tr>
+<tr><td><a href="MParser.html#VALchain_left">chain_left</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">chain_left p op x</code> parses zero or more occurrences of <code class="code">p</code>, separated by
+    <code class="code">op</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALchain_left1">chain_left1</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">chain_left1 p op</code> parses one or more occurrences of <code class="code">p</code>, separated by
+    <code class="code">op</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALchain_right">chain_right</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">chain_right p op x</code> parses zero or more occurrences of <code class="code">p</code>, separated by
+    <code class="code">op</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALchain_right1">chain_right1</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">chain_right1 p op</code> parses one or more occurrences of <code class="code">p</code>, separated by
+    <code class="code">op</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALchar">char</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">char c</code> parses the character <code class="code">c</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.MakeRegexp.Tokens.html#VALchar_literal">char_literal</a> [<a href="MParser.MakeRegexp.Tokens.html">MParser.MakeRegexp.Tokens</a>]</td>
+<td><div class="info">
+Parses a character literal as defined in the OCaml language and returns
+        the character.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALchoice">choice</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">choice [p1; p2; ...; pn ]</code> is equivalent to <code class="code">p1 &lt;|&gt; p2 &lt;|&gt; ... &lt;|&gt; pn
+    &lt;|&gt; zero</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.MakeRegexp.Tokens.html#VALcolon">colon</a> [<a href="MParser.MakeRegexp.Tokens.html">MParser.MakeRegexp.Tokens</a>]</td>
+<td><div class="info">
+Parses a colon <code class="code"><span class="string">':'</span></code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.MakeRegexp.Tokens.html#VALcomma">comma</a> [<a href="MParser.MakeRegexp.Tokens.html">MParser.MakeRegexp.Tokens</a>]</td>
+<td><div class="info">
+Parses a comma <code class="code"><span class="string">','</span></code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.MakeRegexp.Tokens.html#VALcomma_sep">comma_sep</a> [<a href="MParser.MakeRegexp.Tokens.html">MParser.MakeRegexp.Tokens</a>]</td>
+<td><div class="info">
+<code class="code">comma_sep p</code> parses zero or more occurrences of <code class="code">p</code>, separated by
+        <code class="code"><span class="string">','</span></code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.MakeRegexp.Tokens.html#VALcomma_sep1">comma_sep1</a> [<a href="MParser.MakeRegexp.Tokens.html">MParser.MakeRegexp.Tokens</a>]</td>
+<td><div class="info">
+<code class="code">comma_sep1 p</code> parses one or more occurrences of <code class="code">p</code>, separated by
+        <code class="code"><span class="string">','</span></code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALcompound_error">compound_error</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+Creates a <code class="code"><span class="constructor">Compound_error</span></code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALcount">count</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">count n p</code> parses exactly <code class="code">n</code> occurrences of <code class="code">p</code> and returns a list of
+    the results returned by <code class="code">p</code>.
+</div>
+</td></tr>
+<tr><td align="left"><br>D</td></tr>
+<tr><td><a href="MParser.MakeRegexp.Tokens.html#VALdecimal">decimal</a> [<a href="MParser.MakeRegexp.Tokens.html">MParser.MakeRegexp.Tokens</a>]</td>
+<td><div class="info">
+Parses a decimal natural number and returns it as an integer value.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALdigit">digit</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+Parses a decimal digit and returns it.
+</div>
+</td></tr>
+<tr><td><a href="MParser.MakeRegexp.Tokens.html#VALdot">dot</a> [<a href="MParser.MakeRegexp.Tokens.html">MParser.MakeRegexp.Tokens</a>]</td>
+<td><div class="info">
+Parses a dot <code class="code"><span class="string">'.'</span></code>.
+</div>
+</td></tr>
+<tr><td align="left"><br>E</td></tr>
+<tr><td><a href="MParser.html#VALend_by">end_by</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">end_by p sep</code> parses zero or more occurrences of <code class="code">p</code>, separated and ended
+    by <code class="code">sep</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALend_by1">end_by1</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">end_by1 p sep</code> parses one or more occurrences of <code class="code">p</code>, separated and ended
+    by <code class="code">sep</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALeof">eof</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+Parses the end of the input.
+</div>
+</td></tr>
+<tr><td><a href="MParser_Sig.Regexp.html#VALexec">exec</a> [<a href="MParser_Sig.Regexp.html">MParser_Sig.Regexp</a>]</td>
+<td><div class="info">
+Attemts to match the byte-buffer with a regular expression, starting
+      from the position <code class="code">pos</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALexpected_error">expected_error</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+Creates an <code class="code"><span class="constructor">Expected_error</span></code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALexpression">expression</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">expression operators term</code> parses any well-formed expression that can
+    built from the basic terms parsed by <code class="code">term</code> and the operators specified in
+    the operator table <code class="code">operators</code>.
+</div>
+</td></tr>
+<tr><td align="left"><br>F</td></tr>
+<tr><td><a href="MParser.html#VALfail">fail</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">fail msg</code> always fails with a <code class="code"><span class="constructor">Message_error</span></code> with error message <code class="code">msg</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.MakeRegexp.Tokens.html#VALfloat">float</a> [<a href="MParser.MakeRegexp.Tokens.html">MParser.MakeRegexp.Tokens</a>]</td>
+<td><div class="info">
+Parses floating-point literal as defined in the OCaml language and
+        returns its value.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALfollowed_by">followed_by</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">followed_by p msg</code> succeeds without consuming input and returns <code class="code">()</code> if
+    <code class="code">p</code> succeeds at the current position.
+</div>
+</td></tr>
+<tr><td><a href="MParser_Char_Stream.html#VALfrom_channel">from_channel</a> [<a href="MParser_Char_Stream.html">MParser_Char_Stream</a>]</td>
+<td><div class="info">
+<code class="code">from_channel ?block_size ?block_overlap ?min_rspace chn</code> creates a
+    character stream that contains the characters of the input channel <code class="code">chn</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser_Char_Stream.html#VALfrom_string">from_string</a> [<a href="MParser_Char_Stream.html">MParser_Char_Stream</a>]</td>
+<td><div class="info">
+<code class="code">from_string s</code> creates a character stream that contains the characters of
+    the string <code class="code">s</code>.
+</div>
+</td></tr>
+<tr><td align="left"><br>G</td></tr>
+<tr><td><a href="MParser_Sig.Regexp.html#VALget_all_substrings">get_all_substrings</a> [<a href="MParser_Sig.Regexp.html">MParser_Sig.Regexp</a>]</td>
+<td><div class="info">
+Extracts all the matched substrings.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALget_index">get_index</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+Returns the current index into the input.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALget_input">get_input</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+Returns the input stream.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALget_pos">get_pos</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+Returns the current position.
+</div>
+</td></tr>
+<tr><td><a href="MParser_Sig.Regexp.html#VALget_substring">get_substring</a> [<a href="MParser_Sig.Regexp.html">MParser_Sig.Regexp</a>]</td>
+<td><div class="info">
+Extracts a single substring.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALget_user_state">get_user_state</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+Returns the current user state of the parser.
+</div>
+</td></tr>
+<tr><td align="left"><br>H</td></tr>
+<tr><td><a href="MParser.html#VALhex_digit">hex_digit</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+Parses a hexadecimal digit and returns it.
+</div>
+</td></tr>
+<tr><td><a href="MParser.MakeRegexp.Tokens.html#VALhexadecimal">hexadecimal</a> [<a href="MParser.MakeRegexp.Tokens.html">MParser.MakeRegexp.Tokens</a>]</td>
+<td><div class="info">
+Parses a hexadecimal natural number as defined in the OCaml language
+        (prefixed with <code class="code"><span class="string">"0x"</span></code> or <code class="code"><span class="string">"0X"</span></code>) and returns it as an integer value.
+</div>
+</td></tr>
+<tr><td align="left"><br>I</td></tr>
+<tr><td><a href="MParser.html#VALinit">init</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">init input user</code> returns an initial parser state using the input string
+    <code class="code">input</code> and the initial user state <code class="code">user</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.MakeRegexp.Tokens.html#VALinteger">integer</a> [<a href="MParser.MakeRegexp.Tokens.html">MParser.MakeRegexp.Tokens</a>]</td>
+<td><div class="info">
+Parses a decimal integer number and returns its value.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALis_consumed">is_consumed</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">is_consumed reply</code> returns <code class="code"><span class="keyword">true</span></code> if <code class="code">reply</code> is <code class="code"><span class="constructor">Consumed_failed</span></code> or
+    <code class="code"><span class="constructor">Consumed_ok</span></code>, and <code class="code"><span class="keyword">false</span></code> otherwise.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALis_empty">is_empty</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">is_consumed reply</code> returns <code class="code"><span class="keyword">true</span></code> if <code class="code">reply</code> is <code class="code"><span class="constructor">Empty_failed</span></code> or
+    <code class="code"><span class="constructor">Empty_ok</span></code>, and <code class="code"><span class="keyword">false</span></code> otherwise.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALis_eof">is_eof</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">is_eof s</code> returns <code class="code"><span class="keyword">true</span></code> if the current position of <code class="code">s</code> is not a valid
+    position, and <code class="code"><span class="keyword">false</span></code> otherwise.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALis_error">is_error</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">is_error reply</code> returns <code class="code"><span class="keyword">true</span></code> if <code class="code">reply</code> is <code class="code"><span class="constructor">Empty_failed</span></code> or
+    <code class="code"><span class="constructor">Consumed_failed</span></code>, and <code class="code"><span class="keyword">false</span></code> otherwise.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALis_ok">is_ok</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">is_error reply</code> returns <code class="code"><span class="keyword">true</span></code> if <code class="code">reply</code> is <code class="code"><span class="constructor">Empty_ok</span></code> or <code class="code"><span class="constructor">Consumed_ok</span></code>,
+    and <code class="code"><span class="keyword">false</span></code> otherwise.
+</div>
+</td></tr>
+<tr><td align="left"><br>L</td></tr>
+<tr><td><a href="MParser_Char_Stream.html#VALlength">length</a> [<a href="MParser_Char_Stream.html">MParser_Char_Stream</a>]</td>
+<td><div class="info">
+<code class="code">length s</code> returns the number of characters in the stream <code class="code">s</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALletter">letter</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+Parses an English letter and returns it.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALlook_ahead">look_ahead</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">look_ahead p</code> behaves like <code class="code">p</code>, but restores the original state after
+    parsing.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALlowercase">lowercase</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+Parses an English lowercase letter and returns it.
+</div>
+</td></tr>
+<tr><td align="left"><br>M</td></tr>
+<tr><td><a href="MParser_Sig.Regexp.html#VALmake">make</a> [<a href="MParser_Sig.Regexp.html">MParser_Sig.Regexp</a>]</td>
+<td><div class="info">
+Compiles a regular expression.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALmake_failed">make_failed</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">make_failed consumed error</code> returns <code class="code"><span class="constructor">Empty_failed</span> error</code> if <code class="code">consumed =
+    <span class="keyword">false</span></code>, and <code class="code"><span class="constructor">Consumed_failed</span> error</code> of <code class="code">consumed = <span class="keyword">true</span></code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALmake_ok">make_ok</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">make_ok consumed result state error</code> returns <code class="code"><span class="constructor">Empty_ok</span> (result, state,
+    error)</code> if <code class="code">consumed = <span class="keyword">false</span></code>, and <code class="code"><span class="constructor">Consumed_ok</span> (result, state, error)</code>
+    if <code class="code">consumed = <span class="keyword">true</span></code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.MakeRegexp.html#VALmake_regexp">make_regexp</a> [<a href="MParser.MakeRegexp.html">MParser.MakeRegexp</a>]</td>
+<td><div class="info">
+Creates a regular expression from a string.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALmany">many</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">many p</code> parses zero or more occurrences of <code class="code">p</code> and returns a list of the
+    results returned by <code class="code">p</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALmany1">many1</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">many1 p</code> parses one or more occurrences of <code class="code">p</code> and returns a list of the
+    results returned by <code class="code">p</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALmany1_chars">many1_chars</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">many1_chars p</code> parses one or more occurrences of <code class="code">p</code> and returns a string
+    of the results returned by <code class="code">p</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALmany1_fold_left">many1_fold_left</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">many1_fold_left f a p</code> is equivalent to <code class="code">many1 p |&gt;&gt; <span class="constructor">List</span>.fold_left f
+    a</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALmany1_rev">many1_rev</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">many1_rev p</code> is equivalent to <code class="code">many1 p |&gt;&gt; <span class="constructor">List</span>.rev</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALmany1_rev_fold_left">many1_rev_fold_left</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">many1_rev_fold_left f a p</code> is equivalent to <code class="code">many1 p |&gt;&gt; <span class="constructor">List</span>.rev |&gt;&gt;
+    <span class="constructor">List</span>.fold_left f a</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALmany1_satisfy">many1_satisfy</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">many1_satisfy p</code> is equivalent to <code class="code">many1_chars (satisfy p)</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALmany_chars">many_chars</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">many_chars p</code> parses zero or more occurrences of <code class="code">p</code> and returns a string
+    of the results returned by <code class="code">p</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALmany_chars_until">many_chars_until</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">many_chars_until p q</code> parses zero or more occurrences of <code class="code">p</code> until <code class="code">q</code>
+    succeeds and returns a string of the results returned by <code class="code">p</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALmany_fold_left">many_fold_left</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">many_fold_left f a p</code> is equivalent to <code class="code">many p |&gt;&gt; <span class="constructor">List</span>.fold_left f
+    a</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALmany_rev">many_rev</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">many_rev p</code> is equivalent to <code class="code">many p |&gt;&gt; <span class="constructor">List</span>.rev</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALmany_rev_fold_left">many_rev_fold_left</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">many_rev_fold_left f a p</code> is equivalent to <code class="code">many p |&gt;&gt; <span class="constructor">List</span>.rev |&gt;&gt;
+    <span class="constructor">List</span>.fold_left f a</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALmany_satisfy">many_satisfy</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">many_satisfy p</code> is equivalent to <code class="code">many_chars (satisfy p)</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALmany_until">many_until</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">many_until p q</code> parses zero or more occurrences of <code class="code">p</code> until <code class="code">q</code> succeeds
+    and returns a list of the results returned by <code class="code">p</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser_Char_Stream.html#VALmatch_char">match_char</a> [<a href="MParser_Char_Stream.html">MParser_Char_Stream</a>]</td>
+<td><div class="info">
+<code class="code">match_char s pos c</code> is equivalent to <code class="code">read_char s pos = <span class="constructor">Some</span> c</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALmatch_char">match_char</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">match_char s c</code> returns <code class="code"><span class="keyword">true</span></code> if <code class="code">c</code> ist the char at the current
+    position, and <code class="code"><span class="keyword">false</span></code> otherwise.
+</div>
+</td></tr>
+<tr><td><a href="MParser_Char_Stream.MakeRegexp.html#VALmatch_regexp">match_regexp</a> [<a href="MParser_Char_Stream.MakeRegexp.html">MParser_Char_Stream.MakeRegexp</a>]</td>
+<td><div class="info">
+<code class="code">match_regexp s pos rex</code> matches the regular expression <code class="code">rex</code> against the
+      characters in <code class="code">s</code> starting at position <code class="code">pos</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.MakeRegexp.html#VALmatch_regexp">match_regexp</a> [<a href="MParser.MakeRegexp.html">MParser.MakeRegexp</a>]</td>
+<td><div class="info">
+<code class="code">match_regexp s rex</code> matches the regular expression <code class="code">rex</code> against the
+      input.
+</div>
+</td></tr>
+<tr><td><a href="MParser_Char_Stream.html#VALmatch_string">match_string</a> [<a href="MParser_Char_Stream.html">MParser_Char_Stream</a>]</td>
+<td><div class="info">
+<code class="code">match_string s pos str</code> is equivalent to <code class="code">read_string s pos
+    (<span class="constructor">String</span>.length str) = str</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALmatch_string">match_string</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">match_string s str</code> returns <code class="code"><span class="keyword">true</span></code> if the input starting at the current
+    position matches the string <code class="code">str</code>, and <code class="code"><span class="keyword">false</span></code> otherwise.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALmerge_errors">merge_errors</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+Merges two errors.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALmessage">message</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">message msg</code> always fails with a <code class="code"><span class="constructor">Message_error</span></code> with error message <code class="code">msg</code>
+    without consuming input, so that the error message is merged with other
+    errors generated for the same input position.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALmessage_error">message_error</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+Creates a <code class="code"><span class="constructor">Message_error</span></code>.
+</div>
+</td></tr>
+<tr><td align="left"><br>N</td></tr>
+<tr><td><a href="MParser.html#VALnewline">newline</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+Parses a newline (<code class="code"><span class="string">'\n'</span></code>, <code class="code"><span class="string">'\r'</span></code>, or the sequence <code class="code"><span class="string">'\r'</span>, <span class="string">'\n'</span></code>).
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALnext_char">next_char</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">next_char s</code> returns <code class="code"><span class="constructor">Some</span> c</code> where <code class="code">c</code> is the character after the
+    current position, or <code class="code"><span class="constructor">None</span></code> if this position is not a valid position.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALnext_char_satisfies">next_char_satisfies</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">next_char_satisfies p</code> succeeds without consuming input if <code class="code">p</code> returns
+    <code class="code"><span class="keyword">true</span></code> for the character after the current position.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALnext_state">next_state</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">advance s</code> returns the state <code class="code">s</code> with the position advanced by one
+    character if the current position of <code class="code">s</code> is a valid position.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALnone_of">none_of</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">none_of str</code> parses any char not occurring in the string <code class="code">str</code> and
+    returns it.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALnot_followed_by">not_followed_by</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">not_followed_by p msg</code> succeeds without consuming input and returns <code class="code">()</code>
+    if <code class="code">p</code> does not succeed at the current position.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALnsatisfy">nsatisfy</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">nsatisfy n p</code> parses the next <code class="code">n</code> characters if <code class="code">p</code> returns <code class="code"><span class="keyword">true</span></code> for
+    each of them.
+</div>
+</td></tr>
+<tr><td align="left"><br>O</td></tr>
+<tr><td><a href="MParser.html#VALoct_digit">oct_digit</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+Parses an octal digit and returns it.
+</div>
+</td></tr>
+<tr><td><a href="MParser.MakeRegexp.Tokens.html#VALoctal">octal</a> [<a href="MParser.MakeRegexp.Tokens.html">MParser.MakeRegexp.Tokens</a>]</td>
+<td><div class="info">
+Parses an octal natural number as defined in the OCaml language
+        (prefixed with <code class="code"><span class="string">"0o"</span></code> or <code class="code"><span class="string">"0O"</span></code>) and returns it as an integer value.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALopt">opt</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">opt x p</code> is equivalent to <code class="code">p &lt;|&gt;$ x</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALoption">option</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">option p</code> is equivalent to <code class="code">p &gt;&gt;= (<span class="keyword">fun</span> r <span class="keywordsign">-&gt;</span> return (<span class="constructor">Some</span> r)) &lt;|&gt;$
+    <span class="constructor">None</span></code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALoptional">optional</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">optional p</code> is equivalent to <code class="code">p &gt;&gt;$ () &lt;|&gt;$ ()</code>.
+</div>
+</td></tr>
+<tr><td align="left"><br>P</td></tr>
+<tr><td><a href="MParser.html#VALpair">pair</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">pair p q</code> is equivalent to <code class="code"> p &gt;&gt;= (<span class="keyword">fun</span> x <span class="keywordsign">-&gt;</span> q &gt;&gt;= (<span class="keyword">fun</span> y <span class="keywordsign">-&gt;</span> return (x,
+    y)))</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.MakeRegexp.Tokens.html#VALparens">parens</a> [<a href="MParser.MakeRegexp.Tokens.html">MParser.MakeRegexp.Tokens</a>]</td>
+<td><div class="info">
+<code class="code">parens p</code> parses <code class="code">p</code> between parentheses <code class="code"><span class="string">'('</span></code> and <code class="code"><span class="string">')'</span></code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALparse">parse</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">parse p input user</code> runs the parser <code class="code">p</code> on the input <code class="code">input</code> using the
+    initial user state <code class="code">user</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALparse_channel">parse_channel</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">parse_string p chn user</code> runs the parser <code class="code">p</code> on the input channel <code class="code">chn</code>
+    using the initial user state <code class="code">user</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALparse_string">parse_string</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">parse_string p str user</code> runs the parser <code class="code">p</code> on the string <code class="code">str</code> using
+    the initial user state <code class="code">user</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALpeek_char">peek_char</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+Returns the character at the position after the current position or fails
+    if this is not a valid position.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALpipe2">pipe2</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+A variant of <code class="code">(|&gt;&gt;)</code> for functions with two parameters.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALpipe3">pipe3</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+A variant of <code class="code">(|&gt;&gt;)</code> for functions with three parameters.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALpipe4">pipe4</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+A variant of <code class="code">(|&gt;&gt;)</code> for functions with four parameters.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALprev_char">prev_char</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">prev_char s</code> returns <code class="code"><span class="constructor">Some</span> c</code> where <code class="code">c</code> is the character before the
+    current position, or <code class="code"><span class="constructor">None</span></code> if this position is not a valid position.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALprev_char_satisfies">prev_char_satisfies</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">prev_char_satisfies p</code> succeeds without consuming input if <code class="code">p</code> returns
+    <code class="code"><span class="keyword">true</span></code> for the character before the current position.
+</div>
+</td></tr>
+<tr><td align="left"><br>R</td></tr>
+<tr><td><a href="MParser_Char_Stream.html#VALread_char">read_char</a> [<a href="MParser_Char_Stream.html">MParser_Char_Stream</a>]</td>
+<td><div class="info">
+<code class="code">read_char s pos</code> returns <code class="code"><span class="constructor">Some</span> c</code> if <code class="code">c</code> is the character at position
+    <code class="code">pos</code> in <code class="code">s</code>, or <code class="code"><span class="constructor">None</span></code> if this position is not a valid position in
+    <code class="code">s</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALread_char">read_char</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">read_char s</code> returns <code class="code"><span class="constructor">Some</span> c</code> where <code class="code">c</code> is the character at the current
+    position, or <code class="code"><span class="constructor">None</span></code> if this position is not a valid position.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALread_index">read_index</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">read_index s pos</code> returns <code class="code"><span class="constructor">Some</span> c</code> where <code class="code">c</code> is the character at the
+    position <code class="code">pos</code>, or <code class="code"><span class="constructor">None</span></code> if this position is not a valid position.
+</div>
+</td></tr>
+<tr><td><a href="MParser_Char_Stream.html#VALread_string">read_string</a> [<a href="MParser_Char_Stream.html">MParser_Char_Stream</a>]</td>
+<td><div class="info">
+<code class="code">read_string s pos maxlen</code> returns a string containing the next <code class="code">n</code>
+    characters in <code class="code">s</code>, where <code class="code">n</code> is the minimum of <code class="code">maxlen</code> and the number of
+    characters remaining from position <code class="code">pos</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALread_string">read_string</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">read_string s maxlen</code> returns a string containing the next <code class="code">n</code>
+    characters, where <code class="code">n</code> is the minimum of <code class="code">maxlen</code> and the number of
+    characters remaining from the current position.
+</div>
+</td></tr>
+<tr><td><a href="MParser.MakeRegexp.html#VALregexp">regexp</a> [<a href="MParser.MakeRegexp.html">MParser.MakeRegexp</a>]</td>
+<td><div class="info">
+<code class="code">regexp rex</code> parses any string matching the regular expression <code class="code">rex</code> and
+      returns it.
+</div>
+</td></tr>
+<tr><td><a href="MParser.MakeRegexp.html#VALregexp_substrings">regexp_substrings</a> [<a href="MParser.MakeRegexp.html">MParser.MakeRegexp</a>]</td>
+<td><div class="info">
+<code class="code">regexp_substrings rex</code> parses any string matching the regular expression
+      <code class="code">rex</code> and returns an array containing all matched substrings.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALregister_nl">register_nl</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">register_nl lines chars_after_nl</code> increases the line counter by <code class="code">lines</code>
+    and sets the beginning of the current line to <code class="code">chars_after_nl</code> chars
+    before the current index.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALreturn">return</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">return x</code> always succeeds with the result <code class="code">x</code> without consuming any
+    input.
+</div>
+</td></tr>
+<tr><td align="left"><br>S</td></tr>
+<tr><td><a href="MParser.html#VALsatisfy">satisfy</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">satisfy p</code> parses a character for which <code class="code">p</code> returns <code class="code"><span class="keyword">true</span></code> and returns
+    the character.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALsatisfy_l">satisfy_l</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">satisfy_l p label</code> is equivalent to <code class="code">satisfy p &lt;?&gt; label</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser_Char_Stream.html#VALseek">seek</a> [<a href="MParser_Char_Stream.html">MParser_Char_Stream</a>]</td>
+<td><div class="info">
+<code class="code">seek s pos</code> prepares the stream for reading from position <code class="code">pos</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.MakeRegexp.Tokens.html#VALsemi">semi</a> [<a href="MParser.MakeRegexp.Tokens.html">MParser.MakeRegexp.Tokens</a>]</td>
+<td><div class="info">
+Parses a semicolon <code class="code"><span class="string">';'</span></code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.MakeRegexp.Tokens.html#VALsemi_end">semi_end</a> [<a href="MParser.MakeRegexp.Tokens.html">MParser.MakeRegexp.Tokens</a>]</td>
+<td><div class="info">
+<code class="code">semi_end p</code> parses zero or more occurrences of <code class="code">p</code>, separated and ended
+        by <code class="code"><span class="string">';'</span></code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.MakeRegexp.Tokens.html#VALsemi_end1">semi_end1</a> [<a href="MParser.MakeRegexp.Tokens.html">MParser.MakeRegexp.Tokens</a>]</td>
+<td><div class="info">
+<code class="code">semi_sep_end1 p</code> parses one or more occurrences of <code class="code">p</code>, separated and
+        ended by <code class="code"><span class="string">';'</span></code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.MakeRegexp.Tokens.html#VALsemi_sep">semi_sep</a> [<a href="MParser.MakeRegexp.Tokens.html">MParser.MakeRegexp.Tokens</a>]</td>
+<td><div class="info">
+<code class="code">semi_sep p</code> parses zero or more occurrences of <code class="code">p</code>, separated by <code class="code"><span class="string">';'</span></code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.MakeRegexp.Tokens.html#VALsemi_sep1">semi_sep1</a> [<a href="MParser.MakeRegexp.Tokens.html">MParser.MakeRegexp.Tokens</a>]</td>
+<td><div class="info">
+<code class="code">semi_sep1 p</code> parses one or more occurrences of <code class="code">p</code>, separated by <code class="code"><span class="string">';'</span></code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.MakeRegexp.Tokens.html#VALsemi_sep_end">semi_sep_end</a> [<a href="MParser.MakeRegexp.Tokens.html">MParser.MakeRegexp.Tokens</a>]</td>
+<td><div class="info">
+<code class="code">semi_sep_end p</code> parses zero or more occurrences of <code class="code">p</code>, separated and
+        optionally ended by <code class="code"><span class="string">';'</span></code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.MakeRegexp.Tokens.html#VALsemi_sep_end1">semi_sep_end1</a> [<a href="MParser.MakeRegexp.Tokens.html">MParser.MakeRegexp.Tokens</a>]</td>
+<td><div class="info">
+<code class="code">semi_sep_end1 p</code> parses one or more occurrences of <code class="code">p</code>, separated and
+        optionally ended by <code class="code"><span class="string">';'</span></code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALsep_by">sep_by</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">sep_by p sep</code> parses zero or more occurrences of <code class="code">p</code>, separated by <code class="code">sep</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALsep_by1">sep_by1</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">sep_by1 p sep</code> parses one or more occurrences of <code class="code">p</code>, separated by <code class="code">sep</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALsep_end_by">sep_end_by</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">sep_end_by p sep</code> parses zero or more occurrences of <code class="code">p</code>, separated and
+    optionally ended by <code class="code">sep</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALsep_end_by1">sep_end_by1</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">sep_end_by1 p sep</code> parses one or more occurrences of <code class="code">p</code>, separated and
+    optionally ended by <code class="code">sep</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALset_error">set_error</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">set_error reply error</code> returns <code class="code">reply</code> with the error message replaced by
+    <code class="code">error</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALset_pos">set_pos</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+Sets the current position.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALset_user_state">set_user_state</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+Sets the current user state of the parser.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALskip">skip</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">skip p</code> is equivalent to <code class="code">p |&gt;&gt; ignore</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALskip_any_char">skip_any_char</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+Parses any character and returns <code class="code">()</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALskip_any_char_or_nl">skip_any_char_or_nl</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">skip_any_char_or_nl</code> is equivalent to <code class="code">newline &lt;|&gt; skip_any_char</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALskip_char">skip_char</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">skip_char c</code> parses the character <code class="code">c</code> and returns <code class="code">()</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALskip_count">skip_count</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">skip_count n p</code> parses exactly <code class="code">n</code> occurrences of <code class="code">p</code> and returns
+    <code class="code">()</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALskip_many">skip_many</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">skip_many p</code> is equivalent to <code class="code">many p |&gt;&gt; ignore</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALskip_many1">skip_many1</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">skip_many1 p</code> is equivalent to <code class="code">many1 p |&gt;&gt; ignore</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALskip_many1_chars">skip_many1_chars</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">skip_many1_chars p</code> is equivalent to <code class="code">many_chars p |&gt;&gt; ignore</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALskip_many1_satisfy">skip_many1_satisfy</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">skip_many1_satisfy p</code> is equivalent to <code class="code">skip_many1 (satisfy p)</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALskip_many_chars">skip_many_chars</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">skip_many_chars p</code> is equivalent to <code class="code">many_chars p |&gt;&gt; ignore</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALskip_many_chars_until">skip_many_chars_until</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">skip_many_until p q</code> parses zero or more occurrences of <code class="code">p</code> until <code class="code">q</code>
+    succeeds and returns <code class="code">()</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALskip_many_satisfy">skip_many_satisfy</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">skip_many_satisfy p</code> is equivalent to <code class="code">skip_many (satisfy p)</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALskip_many_until">skip_many_until</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">skip_many_until p q</code> parses zero or more occurrences of <code class="code">p</code> until <code class="code">q</code>
+    succeeds and returns <code class="code">()</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALskip_nchars">skip_nchars</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">skip_nchars n</code> skips <code class="code">n</code> characters of the input.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALskip_satisfy">skip_satisfy</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">skip_satisfy p</code> is equivalent to <code class="code">satisfy |&gt;&gt; ignore</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALskip_satisfy_l">skip_satisfy_l</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">skip_satisfy_l p label</code> is equivalent to <code class="code">satisfy_l p label |&gt;&gt;
+    ignore</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALskip_string">skip_string</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">skip_string s</code> parses the string <code class="code">s</code> and returns <code class="code">()</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.MakeRegexp.Tokens.html#VALskip_symbol">skip_symbol</a> [<a href="MParser.MakeRegexp.Tokens.html">MParser.MakeRegexp.Tokens</a>]</td>
+<td><div class="info">
+<code class="code">skip_symbol sym</code> parses the literal string <code class="code">sym</code> and returns <code class="code">()</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALspace">space</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+Parses a space (<code class="code"><span class="string">' '</span></code>), a tab (<code class="code"><span class="string">'\t'</span></code>) or a newline (<code class="code"><span class="string">'\n'</span></code>, <code class="code"><span class="string">'\r'</span></code>, or
+    the sequence <code class="code"><span class="string">'\r'</span>, <span class="string">'\n'</span></code>).
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALspaces">spaces</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">spaces</code> is equivalent to <code class="code">skip_many_chars space</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALspaces1">spaces1</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">spaces</code> is equivalent to <code class="code">skip_many_chars1 space</code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.MakeRegexp.Tokens.html#VALsquares">squares</a> [<a href="MParser.MakeRegexp.Tokens.html">MParser.MakeRegexp.Tokens</a>]</td>
+<td><div class="info">
+<code class="code">squares p</code> parses <code class="code">p</code> between square brackets <code class="code"><span class="string">'['</span></code> and <code class="code"><span class="string">']'</span></code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALstring">string</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">string s</code> parses the string <code class="code">s</code> and returns it.
+</div>
+</td></tr>
+<tr><td><a href="MParser.MakeRegexp.Tokens.html#VALstring_literal">string_literal</a> [<a href="MParser.MakeRegexp.Tokens.html">MParser.MakeRegexp.Tokens</a>]</td>
+<td><div class="info">
+Parses a string literal as defined in the OCaml language and returns the
+        string.
+</div>
+</td></tr>
+<tr><td><a href="MParser.MakeRegexp.Tokens.html#VALsymbol">symbol</a> [<a href="MParser.MakeRegexp.Tokens.html">MParser.MakeRegexp.Tokens</a>]</td>
+<td><div class="info">
+<code class="code">symbol sym</code> parses the literal string <code class="code">sym</code> and returns it.
+</div>
+</td></tr>
+<tr><td align="left"><br>T</td></tr>
+<tr><td><a href="MParser.html#VALtab">tab</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+Parses a tab character (<code class="code"><span class="string">'\t'</span></code>) and returns it.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALtry_return">try_return</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">try_return f x msg s0</code> succeeds with the result <code class="code">f x</code> without consuming
+    input if <code class="code">f x</code> does not raise an exception.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALtry_return2">try_return2</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+A variant of <code class="code">try_return</code> for functions with two parameters.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALtry_return3">try_return3</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+A variant of <code class="code">try_return</code> for functions with three parameters.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALtry_skip">try_skip</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">try_skip p</code> is equivalent to <code class="code">p &gt;&gt;$ <span class="keyword">true</span> &lt;|&gt;$ <span class="keyword">false</span></code>.
+</div>
+</td></tr>
+<tr><td align="left"><br>U</td></tr>
+<tr><td><a href="MParser.html#VALunexpected_error">unexpected_error</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+Creates an <code class="code"><span class="constructor">Unexpected_error</span></code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALunknown_error">unknown_error</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+Creates an <code class="code"><span class="constructor">Unknown_error</span></code>.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALupdate_user_state">update_user_state</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">update_user_state f</code> applies <code class="code">f</code> to the user state of the parser.
+</div>
+</td></tr>
+<tr><td><a href="MParser.html#VALuppercase">uppercase</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+Parses an English uppercase letter and returns it.
+</div>
+</td></tr>
+<tr><td align="left"><br>Z</td></tr>
+<tr><td><a href="MParser.html#VALzero">zero</a> [<a href="MParser.html">MParser</a>]</td>
+<td><div class="info">
+<code class="code">zero</code> always fails with an <code class="code"><span class="constructor">Unknown_error</span></code> without consuming input.
+</div>
+</td></tr>
+</table>
+</body>
+</html>
